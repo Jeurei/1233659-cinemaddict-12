@@ -7,20 +7,8 @@ import {createSiteNav} from './view/siteNav.js';
 import {createSiteSort} from './view/siteSort.js';
 import * as siteFilms from './view/siteFilms.js';
 import * as filmDetails from './view/filmDetails.js';
-
-const createSiteShowMoreButton = () => {
-  return (
-    `<button class="films-list__show-more">Show more</button>`
-  );
-};
-
-const createSiteFooterStatistic = () =>{
-  return (
-    `<section class="footer__statistics">
-    <p>130 291 movies inside</p>
-  </section>`
-  );
-};
+import {createSiteShowMoreButton} from './view/siteShowMoreButton.js';
+import {createSiteFooterStatistic} from './view/footerStatisctic.js';
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
