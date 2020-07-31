@@ -1,4 +1,4 @@
-export const createSiteSort = () =>{
+export const createSiteSort = () => {
 
   return (
     `<ul class="sort">

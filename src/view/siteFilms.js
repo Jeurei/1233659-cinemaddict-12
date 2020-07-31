@@ -1,4 +1,4 @@
-const createSiteMainContentContainers = () =>{
+const createSiteMainContentContainers = () => {
 
   return (
     `<section class="films">
@@ -16,12 +16,14 @@ const createSiteMainContentContainers = () =>{
 };
 
 const createFilmsListTitle = (name) => {
+
   return (
     `<h2 class="films-list__title">${name}</h2>`
   );
 };
 
-const createSiteFilmCard = ()=>{
+const createSiteFilmCard = () => {
+
   return (
     `<article class="film-card">
     <h3 class="film-card__title">The Dance of Life</h3>

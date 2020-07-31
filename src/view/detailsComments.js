@@ -1,6 +1,6 @@
 // разбил на два компонента,мне кажется,что в дальнейшем будет удобнее работать с ними в разных файлах
 
-export const createFilmDetailsComments = () =>{
+export const createFilmDetailsComments = () => {
 
   return (
     `      <section class="film-details__comments-wrap">

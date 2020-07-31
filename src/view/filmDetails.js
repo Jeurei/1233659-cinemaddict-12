@@ -1,7 +1,7 @@
 import {createFilmDetailsDescription} from './detailsDescription.js';
 import {createFilmDetailsComments} from './detailsComments.js';
 
-const createSiteFilmDetailsPopup = () =>{
+const createSiteFilmDetailsPopup = () => {
   return (
     `
     <section class="film-details">
