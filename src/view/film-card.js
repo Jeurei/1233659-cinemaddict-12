@@ -1,28 +1,4 @@
-const createSiteMainContentContainers = () => {
-
-  return (
-    `<section class="films">
-      <section class="films-list">
-        <div class="films-list__container"></div>
-      </section>
-      <section class="films-list--extra">
-        <div class="films-list__container"></div>
-      </section>
-      <section class="films-list--extra">
-        <div class="films-list__container"></div>
-      </section>
-    </section>`
-  );
-};
-
-const createFilmsListTitle = (name) => {
-
-  return (
-    `<h2 class="films-list__title">${name}</h2>`
-  );
-};
-
-const createSiteFilmCard = () => {
+export const createSiteFilmCard = () => {
 
   return (
     `<article class="film-card">
@@ -44,5 +20,3 @@ const createSiteFilmCard = () => {
   </article>`
   );
 };
-
-export {createSiteMainContentContainers, createFilmsListTitle, createSiteFilmCard};
