@@ -1,8 +1,8 @@
-export const createSiteFooterStatistic = () => {
+export const createSiteFooterStatistic = (quantityOfFilms) => {
 
   return (
     `<section class="footer__statistics">
-    <p>130 291 movies inside</p>
+    <p>${quantityOfFilms} movies inside</p>
   </section>`
   );
 };
