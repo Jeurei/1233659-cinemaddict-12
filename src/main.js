@@ -87,10 +87,6 @@ for (let i = 0; i < Math.min(films.length, QUANTITY_OF_FILM_CARDS_PER_STEP); i++
   render(filmsListContainer, createSiteFilmCard(films[i]), `beforeend`);
 }
 
-Array.from(filmsElement.querySelectorAll(`.film-card`)).forEach((film) =>{
-  film.addEventListener(`click`, renderFilmPopup);
-});
-
 if (films.length > QUANTITY_OF_FILM_CARDS_PER_STEP) {
 
   let renderedFilms = QUANTITY_OF_FILM_CARDS_PER_STEP;
@@ -125,6 +121,10 @@ extraFilmsLists.forEach(function (element, i) {
     render(elementFilmContainer, createSiteFilmCard(sortedFlms[i][j]), `beforeend`);
   }
 
+});
+
+document.querySelectorAll(`.film-card`).forEach((filmCard) => {
+  filmCard.addEventListener(`click`, renderFilmPopup);
 });
 
 render(siteFooterElement, createSiteFooterStatistic(films.length), `beforeend`);
