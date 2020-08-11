@@ -45,6 +45,10 @@ const renderFilmPopup = (evt) => {
   document.querySelector(`.film-details__close-btn`).addEventListener(`click`, closePopup);
 };
 
+const sortFilmsByProperty = (films, property) => {
+  return films.sort((a, b) => b[property] - a[property]).slice(0, QUANTITY_OF_FILM_CARDS_IN_EXTRA_LISTS);
+};
+
 let films = [];
 
 for (let i = 0; i < QUANTITY_OF_FILM_CARDS; i++) {
@@ -52,9 +56,9 @@ for (let i = 0; i < QUANTITY_OF_FILM_CARDS; i++) {
 }
 
 
-const filmsSotredByRating = [...films].sort((a, b) => b.rating - a.rating).slice(0, QUANTITY_OF_FILM_CARDS_IN_EXTRA_LISTS);
-const filmsSortedByComments = [...films].sort((a, b) => b.comments - a.comments).slice(0, QUANTITY_OF_FILM_CARDS_IN_EXTRA_LISTS);
-const sortedFlms = [filmsSotredByRating, filmsSortedByComments];
+const filmsSotredByRating = sortFilmsByProperty([...films], `rating`);
+const filmsSortedByComments = sortFilmsByProperty([...films], `comments`);
+const sortedFilms = [filmsSotredByRating, filmsSortedByComments];
 const filmsFilters = generateFilter(films);
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
@@ -117,8 +121,8 @@ extraFilmsLists.forEach(function (element, i) {
 
   const elementFilmContainer = element.querySelector(`.films-list__container`);
 
-  for (let j = 0; j < sortedFlms.length; j++) {
-    render(elementFilmContainer, createSiteFilmCard(sortedFlms[i][j]), `beforeend`);
+  for (let j = 0; j < sortedFilms.length; j++) {
+    render(elementFilmContainer, createSiteFilmCard(sortedFilms[i][j]), `beforeend`);
   }
 
 });
