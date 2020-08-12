@@ -31,6 +31,8 @@ const renderFilmCard = (filmContainer, film) => {
     document.querySelector(`.film-details`).remove();
 
     closeButton.removeEventListener(`click`, closePopup);
+
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   const onEscKeyDown = (evt) => {
@@ -38,7 +40,6 @@ const renderFilmCard = (filmContainer, film) => {
     if (evt.key === ESC_CODE) {
       evt.preventDefault();
       closePopup();
-      document.removeEventListener(`keydown`, onEscKeyDown);
     }
 
   };
