@@ -1,4 +1,6 @@
-export const createSiteNav = (filters) => {
+import {createElement} from '../utils.js';
+
+const createSiteNav = (filters) => {
   const [watchlist, history, favorite] = filters.map((filter)=>filter.count);
 
   return (
@@ -13,3 +15,28 @@ export const createSiteNav = (filters) => {
   </nav>`
   );
 };
+
+export default class SiteNav {
+  constructor(filters) {
+    this._element = null;
+    this._filters = filters;
+  }
+
+  getTemplate() {
+
+    return createSiteNav(this._filters);
+  }
+
+  getElement() {
+
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -4,7 +4,6 @@ const createGenresSpans = (genres) => {
 
 export const createFilmDetailsDescription = (film) => {
   const {name, img, description, rating, filmDuration, filmGenre, ageLimit, director, writters, actors, releaseDate, country} = film;
-
   return (
     `<div class="film-details__close">
   <button class="film-details__close-btn" type="button">close</button>

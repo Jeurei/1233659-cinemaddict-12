@@ -122,7 +122,7 @@ const generateFilmName = () =>{
   return filmNames[getRandomInteger(0, filmNames.length - 1)];
 };
 
-export const generateFilm = (id) =>{
+export const generateFilm = () =>{
   const name = generateFilmName();
   const img = postersMap[name];
   const description = generateDescription();
@@ -159,6 +159,5 @@ export const generateFilm = (id) =>{
     isInWatchlist,
     isWatched,
     isFavorite,
-    id,
   });
 };
