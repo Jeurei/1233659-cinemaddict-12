@@ -1,12 +1,12 @@
 import {createFilmDetailsDescription} from './film-details-description.js';
 import {createFilmDetailsComments} from './film-details-comments.js';
+import {createElement} from '../utils.js';
 
-export const createSiteFilmDetailsPopup = (film) => {
+const createSiteFilmDetailsPopup = (film) => {
   const quantityOfComments = film.comments;
 
   return (
-    `
-    <section class="film-details">
+    `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           ${createFilmDetailsDescription(film)}
@@ -18,3 +18,27 @@ export const createSiteFilmDetailsPopup = (film) => {
     </section>`
   );
 };
+
+export default class FilmPopup {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createSiteFilmDetailsPopup(this._film);
+  }
+
+  getElement() {
+
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this._film));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,3 +1,5 @@
+import {createElement} from '../utils.js';
+
 const HIGHEST_USER_RANK = 21;
 const LOW_USER_RANK = 10;
 const LOWEST_USER_RANK = 0;
@@ -6,7 +8,6 @@ const MEDIUM_USER_NAME = `fan`;
 const LOW_USER_NAME = `novice`;
 
 const getUserRank = (quantityOfWatched) => {
-// нет ли способа по лучше?
   if (quantityOfWatched >= HIGHEST_USER_RANK) {
     return HIGHEST_USER_NAME;
   } else if (quantityOfWatched < HIGHEST_USER_RANK && quantityOfWatched > LOW_USER_RANK) {
@@ -19,9 +20,7 @@ const getUserRank = (quantityOfWatched) => {
 
 };
 
-export const createUserProfile = (filters) => {
-  // так писать ок? Или стоит сделать через поиск в массиве значения history?
-  const rank = getUserRank(filters[1].count);
+const createUserProfile = (rank) => {
   return (
     `<section class="header__profile profile">
     <p class="profile__rating">${rank}</p>
@@ -29,3 +28,28 @@ export const createUserProfile = (filters) => {
   </section>`
   );
 };
+
+export default class UserProfile {
+
+  constructor(quantityOfWatched) {
+    this._element = null;
+    this._rank = getUserRank(quantityOfWatched);
+  }
+
+  getTemplate() {
+    return createUserProfile(this._rank);
+  }
+
+  getElement() {
+
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
