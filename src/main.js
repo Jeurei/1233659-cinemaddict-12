@@ -1,4 +1,4 @@
-const QUANTITY_OF_FILM_CARDS = 0;
+const QUANTITY_OF_FILM_CARDS = 20;
 const QUANTITY_OF_FILM_CARDS_PER_STEP = 5;
 const QUANTITY_OF_FILM_CARDS_IN_EXTRA_LISTS = 2;
 const EXTRA_FILMS_LIST_TITLES = [`Tor rated`, `Top commented`];
@@ -69,41 +69,28 @@ const siteFooterElement = document.querySelector(`.footer`);
 const films = new Array(QUANTITY_OF_FILM_CARDS).fill().map(() => generateFilm());
 const filmsFilters = generateFilter(films);
 
+render(siteHeaderElement, new UserProfile((filmsFilters.find((filter) => filter.name === `history`)).count).getElement(), RenderPosition.BEFOREEND);
+
+render(siteMainElement, new SiteNav(filmsFilters).getElement(), RenderPosition.BEFOREEND);
+
+render(siteMainElement, new SiteSort().getElement(), RenderPosition.BEFOREEND);
+
+const filmsContainer = new SiteMainContentContainers();
+
+render(siteMainElement, filmsContainer.getElement(), RenderPosition.BEFOREEND);
+
+const filmsList = new SiteFilmsList(DEFAULT_FILM_LIST_CLASS);
+
+render(filmsContainer.getElement(), filmsList.getElement(), RenderPosition.BEFOREEND);
+
+render(siteFooterElement, new SiteStatistic(films.length).getElement(), RenderPosition.BEFOREEND);
+
 if (!films.length) {
-  render(siteHeaderElement, new UserProfile((filmsFilters.find((filter) => filter.name === `history`)).count).getElement(), RenderPosition.BEFOREEND);
-
-  render(siteMainElement, new SiteNav(filmsFilters).getElement(), RenderPosition.BEFOREEND);
-
-  render(siteMainElement, new SiteSort().getElement(), RenderPosition.BEFOREEND);
-
-  const filmsContainer = new SiteMainContentContainers();
-
-  render(siteMainElement, filmsContainer.getElement(), RenderPosition.BEFOREEND);
-
-  const filmsList = new SiteFilmsList(DEFAULT_FILM_LIST_CLASS);
-
-  render(filmsContainer.getElement(), filmsList.getElement(), RenderPosition.BEFOREEND);
-
   render(filmsList.getElement(), new SiteNoData().getElement(), RenderPosition.BEFOREEND);
-
-  render(siteFooterElement, new SiteStatistic(films.length).getElement(), RenderPosition.BEFOREEND);
-
 } else {
   const filmsSotredByRating = sortFilmsByProperty([...films], `rating`);
   const filmsSortedByComments = sortFilmsByProperty([...films], `comments`);
   const sortedFilms = [filmsSotredByRating, filmsSortedByComments];
-
-  render(siteHeaderElement, new UserProfile((filmsFilters.find((filter) => filter.name === `history`)).count).getElement(), RenderPosition.BEFOREEND);
-
-  render(siteMainElement, new SiteNav(filmsFilters).getElement(), RenderPosition.BEFOREEND);
-
-  render(siteMainElement, new SiteSort().getElement(), RenderPosition.BEFOREEND);
-
-  const filmsContainer = new SiteMainContentContainers();
-
-  render(siteMainElement, filmsContainer.getElement(), RenderPosition.BEFOREEND);
-
-  const filmsList = new SiteFilmsList(DEFAULT_FILM_LIST_CLASS);
 
   const extraFilmsLists = new Array(QUANTITY_OF_EXTRA_FILMS_LISTS).fill().map(() => new SiteFilmsList(EXTRA_FILMS_LIST_CLASS));
 
@@ -159,5 +146,4 @@ if (!films.length) {
 
   });
 
-  render(siteFooterElement, new SiteStatistic(films.length).getElement(), RenderPosition.BEFOREEND);
 }
