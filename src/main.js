@@ -132,7 +132,7 @@ extraFilmsLists.forEach(function (element, i) {
   render(element.getElement(), elementFilmContainer.getElement(), RenderPosition.BEFOREEND);
 
   for (let j = 0; j < sortedFilms.length; j++) {
-    render(elementFilmContainer.getElement(), new Film(sortedFilms[i][j]).getElement(), RenderPosition.BEFOREEND);
+    renderFilmCard(elementFilmContainer.getElement(), sortedFilms[i][j]);
   }
 
 });

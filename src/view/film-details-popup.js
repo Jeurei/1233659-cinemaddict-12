@@ -1,5 +1,5 @@
-import {createFilmDetailsDescription} from './film-details-description.js';
-import {createFilmDetailsComments} from './film-details-comments.js';
+import DetailsDescription from './film-details-description.js';
+import DetailsComments from './film-details-comments.js';
 import {createElement} from '../utils.js';
 
 const createSiteFilmDetailsPopup = (film) => {
@@ -9,10 +9,10 @@ const createSiteFilmDetailsPopup = (film) => {
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
-          ${createFilmDetailsDescription(film)}
+          ${new DetailsDescription(film).getTemplate()}
         </div>
         <div class="form-details__bottom-container">
-          ${createFilmDetailsComments(quantityOfComments)}
+          ${new DetailsComments(quantityOfComments).getTemplate()}
         </div>
       </form>
     </section>`
