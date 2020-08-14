@@ -1,8 +1,10 @@
+import {createElement} from '../utils.js';
+
 const createGenresSpans = (genres) => {
   return genres.map((genre)=>`<span class="film-details__genre">${genre}</span>`).join(``);
 };
 
-export const createFilmDetailsDescription = (film) => {
+const createFilmDetailsDescription = (film) => {
   const {name, img, description, rating, filmDuration, filmGenre, ageLimit, director, writters, actors, releaseDate, country} = film;
   return (
     `<div class="film-details__close">
@@ -77,3 +79,28 @@ export const createFilmDetailsDescription = (film) => {
 </section>`
   );
 };
+
+export default class DetailsDescription {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+
+    return createFilmDetailsDescription(this._film);
+  }
+
+  getElement() {
+
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,4 +1,4 @@
-import {getRandomInteger} from '../utils.js';
+import {getRandomInteger, createElement} from '../utils.js';
 
 const createRandomComments = (quantity) => {
 
@@ -41,7 +41,7 @@ const createRandomComments = (quantity) => {
   return result.join(``);
 };
 
-export const createFilmDetailsComments = (quantity) => {
+const createFilmDetailsComments = (quantity) => {
 
   return (
     `<section class="film-details__comments-wrap">
@@ -83,3 +83,27 @@ export const createFilmDetailsComments = (quantity) => {
   </section>`
   );
 };
+
+export default class DetailsComments {
+  constructor(quantityOfComments) {
+    this._element = null;
+    this._quantity = quantityOfComments;
+  }
+
+  getTemplate() {
+    return createFilmDetailsComments(this._quantity);
+  }
+
+  getElement() {
+
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
