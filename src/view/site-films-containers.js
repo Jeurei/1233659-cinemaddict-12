@@ -1,4 +1,5 @@
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
+
 
 const createSiteMainContentContainers = () => {
 
@@ -8,26 +9,9 @@ const createSiteMainContentContainers = () => {
   );
 };
 
-export default class SiteMainContentContainers {
-  constructor() {
-    this._element = null;
-  }
-
+export default class SiteMainContentContainers extends Abstract {
   getTemplate() {
 
     return createSiteMainContentContainers();
-  }
-
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

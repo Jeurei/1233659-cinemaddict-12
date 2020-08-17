@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
 
 const createGenresSpans = (genres) => {
   return genres.map((genre)=>`<span class="film-details__genre">${genre}</span>`).join(``);
@@ -80,27 +80,14 @@ const createFilmDetailsDescription = (film) => {
   );
 };
 
-export default class DetailsDescription {
+export default class DetailsDescription extends Abstract {
   constructor(film) {
-    this._element = null;
+    super();
     this._film = film;
   }
 
   getTemplate() {
 
     return createFilmDetailsDescription(this._film);
-  }
-
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

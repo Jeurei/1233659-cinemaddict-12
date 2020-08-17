@@ -1,6 +1,6 @@
 import DetailsDescription from './film-details-description.js';
 import DetailsComments from './film-details-comments.js';
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
 
 const createSiteFilmDetailsPopup = (film) => {
   const quantityOfComments = film.comments;
@@ -19,26 +19,35 @@ const createSiteFilmDetailsPopup = (film) => {
   );
 };
 
-export default class FilmPopup {
+export default class FilmPopup extends Abstract {
   constructor(film) {
-    this._element = null;
+    super();
     this._film = film;
+    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._keyDownHandler = this._keyDownHandler.bind(this);
   }
 
   getTemplate() {
     return createSiteFilmDetailsPopup(this._film);
   }
 
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-    }
-
-    return this._element;
+  _onCloseButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);
+  }
+
+  _keyDownHandler(evt) {
+    evt.preventDefault();
+    this._callback.keydown(evt);
+  }
+
+  setKeydownHandler(callback) {
+    this._callback.keydown = callback;
+    document.addEventListener(`keydown`, this._keyDownHandler);
   }
 }

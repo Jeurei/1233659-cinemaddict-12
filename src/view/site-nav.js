@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
 
 const createSiteNav = (filters) => {
   const [watchlist, history, favorite] = filters.map((filter)=>filter.count);
@@ -16,27 +16,14 @@ const createSiteNav = (filters) => {
   );
 };
 
-export default class SiteNav {
+export default class SiteNav extends Abstract {
   constructor(filters) {
-    this._element = null;
+    super();
     this._filters = filters;
   }
 
   getTemplate() {
 
     return createSiteNav(this._filters);
-  }
-
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

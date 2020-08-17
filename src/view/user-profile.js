@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
 
 const HIGHEST_USER_RANK = 21;
 const LOW_USER_RANK = 10;
@@ -29,27 +29,14 @@ const createUserProfile = (rank) => {
   );
 };
 
-export default class UserProfile {
+export default class UserProfile extends Abstract {
 
   constructor(quantityOfWatched) {
-    this._element = null;
+    super();
     this._rank = getUserRank(quantityOfWatched);
   }
 
   getTemplate() {
     return createUserProfile(this._rank);
-  }
-
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
