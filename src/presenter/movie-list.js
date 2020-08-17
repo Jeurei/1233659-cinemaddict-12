@@ -47,20 +47,18 @@ export default class MovieList {
   }
 
   _renderFilmCard(filmContainer, film) {
+
     if (filmContainer instanceof Abstract) {
       filmContainer = filmContainer.getElement();
     }
 
     const newFilm = new Film(film);
     const newFilmPopup = new FilmPopup(film);
-    const closeButton = newFilmPopup.getElement().querySelector(`.film-details__close-btn`);
 
     const closePopup = () => {
       document.querySelector(`.film-details`).remove();
 
-      closeButton.removeEventListener(`click`, closePopup);
-
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      newFilmPopup.removeCloseHandlers();
     };
 
     const onEscKeyDown = (evt) => {
@@ -111,7 +109,6 @@ export default class MovieList {
   _renderExtraFilmsContainers(element, i) {
 
     render(element, new FilmListTitle(EXTRA_FILMS_LIST_TITLES[i]), RenderPosition.BEFOREEND);
-    console.log(`MovieList -> _renderExtraFilmsContainers -> render`, render);
 
     const elementFilmContainer = new FilmContainer();
 
@@ -138,7 +135,7 @@ export default class MovieList {
       this._renderShowMoreButton();
     }
 
-    this._extraFilmsLists.forEach(function (element, i) {
+    this._siteExtraFilmsLists.forEach(function (element, i) {
       this._renderExtraFilmsContainers(element, i);
     }, this);
   }

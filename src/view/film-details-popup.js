@@ -50,4 +50,10 @@ export default class FilmPopup extends Abstract {
     this._callback.keydown = callback;
     document.addEventListener(`keydown`, this._keyDownHandler);
   }
+
+  removeCloseHandlers() {
+    this._callback.click = null;
+    this.getElement().querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
+    document.removeEventListener(`keydown`, this._keyDownHandler);
+  }
 }
