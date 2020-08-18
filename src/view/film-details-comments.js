@@ -1,4 +1,5 @@
-import {getRandomInteger, createElement} from '../utils.js';
+import Abstract from './abstract.js';
+import {getRandomInteger} from '../utils/common.js';
 
 const createRandomComments = (quantity) => {
 
@@ -84,9 +85,9 @@ const createFilmDetailsComments = (quantity) => {
   );
 };
 
-export default class DetailsComments {
+export default class DetailsComments extends Abstract {
   constructor(quantityOfComments) {
-    this._element = null;
+    super();
     this._quantity = quantityOfComments;
   }
 
@@ -94,16 +95,4 @@ export default class DetailsComments {
     return createFilmDetailsComments(this._quantity);
   }
 
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }

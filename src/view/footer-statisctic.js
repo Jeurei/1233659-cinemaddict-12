@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import Abstract from './abstract.js';
 
 const createSiteFooterStatistic = (quantityOfFilms) => {
 
@@ -9,9 +9,9 @@ const createSiteFooterStatistic = (quantityOfFilms) => {
   );
 };
 
-export default class SiteStatistic {
+export default class SiteStatistic extends Abstract {
   constructor(quantityOfFilms) {
-    this._element = null;
+    super();
     this._quantityOfFilms = quantityOfFilms;
   }
 
@@ -19,16 +19,4 @@ export default class SiteStatistic {
     return createSiteFooterStatistic(this._quantityOfFilms);
   }
 
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
