@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createSiteShowMoreButton = () => {
 
@@ -7,7 +7,7 @@ const createSiteShowMoreButton = () => {
   );
 };
 
-export default class ShowMoreButton extends Abstract {
+export default class ShowMoreButton extends AbstractView {
   constructor() {
     super();
     this._clickHandler = this._clickHandler.bind(this);

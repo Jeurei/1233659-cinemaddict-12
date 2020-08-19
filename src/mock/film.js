@@ -20,16 +20,6 @@ const postersMap = {
   [`The Man With the Golden Arm`]: `./images/posters/the-man-with-the-golden-arm.jpg`
 };
 
-const yearsMap = {
-  [`Made For Each Other`]: `1971`,
-  [`Popeye the Sailor meets Sindbad the Sailor`]: `1936`,
-  [`Sagebrush Trail`]: `1933`,
-  [`Santa Claus Conquers the Martians`]: `1964`,
-  [`The Dance of Life`]: `1929`,
-  [`The Great Flamarion`]: `1945`,
-  [`The Man With the Golden Arm`]: `1955`
-};
-
 const ageLimitMap = {
   [`Made For Each Other`]: `16`,
   [`Popeye the Sailor meets Sindbad the Sailor`]: `12`,
@@ -51,13 +41,13 @@ const directorsMap = {
 };
 
 const releaseDatesMap = {
-  [`Made For Each Other`]: `10 February 1971`,
-  [`Popeye the Sailor meets Sindbad the Sailor`]: `27 November 1936`,
-  [`Sagebrush Trail`]: `15 December 1933`,
-  [`Santa Claus Conquers the Martians`]: `14 November 1964`,
-  [`The Dance of Life`]: `1929`,
-  [`The Great Flamarion`]: `14 January 1945`,
-  [`The Man With the Golden Arm`]: `14 December 1955`
+  [`Made For Each Other`]: new Date(`February 10, 1971`),
+  [`Popeye the Sailor meets Sindbad the Sailor`]: new Date(`November 27, 1936`),
+  [`Sagebrush Trail`]: new Date(`December 15, 1933`),
+  [`Santa Claus Conquers the Martians`]: new Date(`November 14, 1964`),
+  [`The Dance of Life`]: new Date(`1929`),
+  [`The Great Flamarion`]: new Date(`January 14, 1945`),
+  [`The Man With the Golden Arm`]: new Date(`January 14, 1945`)
 };
 
 const writtersMap = {
@@ -128,10 +118,9 @@ export const generateFilm = () =>{
   const description = generateDescription();
   const comments = getRandomInteger(0, MAX_COMMENTS_QUANTITY);
   const rating = getRandomRating();
-  const year = yearsMap[name];
   const releaseDate = releaseDatesMap[name];
   const director = directorsMap[name];
-  const writers = writtersMap[name];
+  const writters = writtersMap[name];
   const actors = actorsMap[name];
   const ageLimit = ageLimitMap[name];
   const filmDuration = filmsDurationMap[name];
@@ -147,10 +136,9 @@ export const generateFilm = () =>{
     description,
     comments,
     rating,
-    year,
     releaseDate,
     director,
-    writers,
+    writters,
     actors,
     ageLimit,
     filmDuration,

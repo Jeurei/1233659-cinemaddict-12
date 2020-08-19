@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 
 const createSiteMainContentContainers = () => {
@@ -9,7 +9,7 @@ const createSiteMainContentContainers = () => {
   );
 };
 
-export default class SiteMainContentContainers extends Abstract {
+export default class SiteMainContentContainers extends AbstractView {
   getTemplate() {
 
     return createSiteMainContentContainers();

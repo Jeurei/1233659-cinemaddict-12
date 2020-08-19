@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createSiteNav = (filters) => {
   const [watchlist, history, favorite] = filters.map((filter)=>filter.count);
@@ -16,7 +16,7 @@ const createSiteNav = (filters) => {
   );
 };
 
-export default class SiteNav extends Abstract {
+export default class SiteNav extends AbstractView {
   constructor(filters) {
     super();
     this._filters = filters;

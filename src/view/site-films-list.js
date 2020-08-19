@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createSiteFilmsList = (className) => {
 
@@ -8,7 +8,7 @@ const createSiteFilmsList = (className) => {
   );
 };
 
-export default class SiteFilmsList extends Abstract {
+export default class SiteFilmsList extends AbstractView {
   constructor(className) {
     super();
     this._className = className;

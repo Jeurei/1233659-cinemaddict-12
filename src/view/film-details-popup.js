@@ -1,6 +1,6 @@
 import DetailsDescription from './film-details-description.js';
 import DetailsComments from './film-details-comments.js';
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createSiteFilmDetailsPopup = (film) => {
   const quantityOfComments = film.comments;
@@ -19,7 +19,7 @@ const createSiteFilmDetailsPopup = (film) => {
   );
 };
 
-export default class FilmPopup extends Abstract {
+export default class FilmPopup extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
