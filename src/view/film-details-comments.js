@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 import {getRandomInteger} from '../utils/common.js';
 
 const createRandomComments = (quantity) => {
@@ -85,7 +85,7 @@ const createFilmDetailsComments = (quantity) => {
   );
 };
 
-export default class DetailsComments extends Abstract {
+export default class DetailsComments extends AbstractView {
   constructor(quantityOfComments) {
     super();
     this._quantity = quantityOfComments;

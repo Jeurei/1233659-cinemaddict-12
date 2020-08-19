@@ -1,4 +1,5 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
+import {humanizeFilmDate} from '../utils/films.js';
 
 const createGenresSpans = (genres) => {
   return genres.map((genre)=>`<span class="film-details__genre">${genre}</span>`).join(``);
@@ -44,7 +45,7 @@ const createFilmDetailsDescription = (film) => {
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Release Date</td>
-        <td class="film-details__cell">${releaseDate}</td>
+        <td class="film-details__cell">${humanizeFilmDate(releaseDate)}</td>
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Runtime</td>
@@ -80,7 +81,7 @@ const createFilmDetailsDescription = (film) => {
   );
 };
 
-export default class DetailsDescription extends Abstract {
+export default class DetailsDescription extends AbstractView {
   constructor(film) {
     super();
     this._film = film;

@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createFilmsListTitle = (name) => {
 
@@ -7,7 +7,7 @@ const createFilmsListTitle = (name) => {
   );
 };
 
-export default class FilmsListTitle extends Abstract {
+export default class FilmsListTitle extends AbstractView {
   constructor(name) {
     super();
     this._name = name;

@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const HIGHEST_USER_RANK = 21;
 const LOW_USER_RANK = 10;
@@ -29,7 +29,7 @@ const createUserProfile = (rank) => {
   );
 };
 
-export default class UserProfile extends Abstract {
+export default class UserProfile extends AbstractView {
 
   constructor(quantityOfWatched) {
     super();

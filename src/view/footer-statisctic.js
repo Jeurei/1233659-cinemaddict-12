@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createSiteFooterStatistic = (quantityOfFilms) => {
 
@@ -9,7 +9,7 @@ const createSiteFooterStatistic = (quantityOfFilms) => {
   );
 };
 
-export default class SiteStatistic extends Abstract {
+export default class SiteStatistic extends AbstractView {
   constructor(quantityOfFilms) {
     super();
     this._quantityOfFilms = quantityOfFilms;
