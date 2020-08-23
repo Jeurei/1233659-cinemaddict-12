@@ -10,6 +10,8 @@ const getRandomRating = () =>{
   return result > upper ? String(upper) : result;
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const postersMap = {
   [`Made For Each Other`]: `./images/posters/made-for-each-other.png`,
   [`Popeye the Sailor meets Sindbad the Sailor`]: `./images/posters/popeye-meets-sinbad.png`,
@@ -129,8 +131,10 @@ export const generateFilm = () =>{
   const isInWatchlist = Boolean(getRandomInteger(0, 1));
   const isWatched = Boolean(getRandomInteger(0, 1));
   const isFavorite = Boolean(getRandomInteger(0, 1));
+  const id = generateId();
 
   return ({
+    id,
     name,
     img,
     description,
