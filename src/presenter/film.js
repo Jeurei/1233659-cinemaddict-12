@@ -2,14 +2,21 @@ import Film from '../view/film-card.js';
 import FilmPopup from '../view/film-details-popup.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {ESC_CODE} from '../const.js';
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  OPENED: `OPENED`
+};
+
 
 export default class FilmPresenter {
-  constructor(filmContainer, changeData) {
+  constructor(filmContainer, changeData, changeMode) {
     this._filmContainer = filmContainer;
     this._changeData = changeData;
     this._filmComponent = null;
     this._filmPopupComponent = null;
-
+    this._changeMode = changeMode;
+    this._mode = Mode.DEFAULT;
+    this._updateCard = this._updateCard.bind(this);
     this._addToWatchListClickHandler = this._addToWatchListClickHandler.bind(this);
     this._addToWatchedClickHandler = this._addToWatchedClickHandler.bind(this);
     this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
@@ -23,7 +30,7 @@ export default class FilmPresenter {
     const prevFilmComponent = this._filmComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
     this._filmComponent = new Film(film);
-    this._filmPopupComponent = new FilmPopup(film);
+    this._filmPopupComponent = new FilmPopup(film, this._updateCard);
 
     this._filmComponent.setClickHandler(this._clickHandler);
     this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
@@ -39,7 +46,7 @@ export default class FilmPresenter {
       replace(this._filmComponent, prevFilmComponent);
     }
 
-    if (document.contains(prevFilmPopupComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       this._filmPopupComponent.setCloseClickHandler(this._clickClosePopupHandler);
       this._filmPopupComponent.setKeydownHandler(this._escKeyDownHandler);
       replace(this._filmPopupComponent, prevFilmPopupComponent);
@@ -47,6 +54,25 @@ export default class FilmPresenter {
 
     remove(prevFilmComponent);
     remove(prevFilmPopupComponent);
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToCard();
+    }
+  }
+
+  _updateCard(film) {
+    this._film = film;
+    const prevFilmComponent = this._filmComponent;
+    this._filmComponent = new Film(film);
+
+    this._filmComponent.setClickHandler(this._clickHandler);
+    this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
+    this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
+    this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
+
+    replace(this._filmComponent, prevFilmComponent);
   }
 
   destroy() {
@@ -64,6 +90,7 @@ export default class FilmPresenter {
 
     if (evt.key === ESC_CODE) {
       evt.preventDefault();
+      this._filmPopupComponent.reset(this._film);
       this._closePopup();
     }
 
@@ -113,9 +140,12 @@ export default class FilmPresenter {
 
   _clickHandler() {
     this._renderFilmPopup();
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _clickClosePopupHandler() {
     this._closePopup();
+    this._mode = Mode.DEFAULT;
   }
 }

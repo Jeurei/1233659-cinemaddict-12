@@ -27,8 +27,10 @@ export default class MovieList {
     this._showMoreButton = new ShowMoreButton();
     this._siteNoData = new SiteNoData();
     this._currenSortType = SortType.DEFAULT;
-    this._filmPresenter = {};
+    this._filmPresenter = new Map();
+    this._filmContainers = [];
     this._renderedFilms = QUANTITY_OF_FILM_CARDS_PER_STEP;
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -51,19 +53,37 @@ export default class MovieList {
   }
 
   _handleFilmChange(updatedFilm) {
+    const arrayOfPresenters = [];
+
+    for (let presenter of this._filmPresenter.keys()) {
+      if (presenter[0] === updatedFilm.id) {
+        arrayOfPresenters.push(presenter);
+      }
+    }
+
     this._films = updateItem(this._films, updatedFilm);
     this._sourcedFilms = updateItem(this._sourcedFilms, updatedFilm);
-    this._filmPresenter[updatedFilm.id].init(updatedFilm);
+
+    arrayOfPresenters.forEach(function (presenter) {
+      this._filmPresenter.get(presenter).init(updatedFilm);
+    }, this);
+
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._filmPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _renderNoData() {
     render(this._filmsList, this._siteNoData, RenderPosition.BEFOREEND);
   }
 
-  _renderFilmCard(filmContainer, film) {
-    const filmPresenter = new FilmPresenter(filmContainer, this._handleFilmChange);
+  _renderFilmCard(filmContainer, film, i = 0) {
+    const filmPresenter = new FilmPresenter(filmContainer, this._handleFilmChange, this._handleModeChange);
     filmPresenter.init(film);
-    this._filmPresenter[film.id] = filmPresenter;
+    this._filmPresenter.set([film.id, i], filmPresenter);
   }
 
   _renderFilms(from, to) {
@@ -88,8 +108,9 @@ export default class MovieList {
   }
 
   _renderExtraFilmsLists(elementContainer, i) {
+    const containerId = i + 1;
     for (let j = 0; j < this._sortedFilms.length; j++) {
-      this._renderFilmCard(elementContainer, this._sortedFilms[i][j]);
+      this._renderFilmCard(elementContainer, this._sortedFilms[i][j], containerId);
     }
   }
 
@@ -101,6 +122,8 @@ export default class MovieList {
       render(element, new FilmListTitle(EXTRA_FILMS_LIST_TITLES[i]), RenderPosition.BEFOREEND);
 
       const elementFilmContainer = new FilmContainer();
+
+      this._filmContainers.push(elementFilmContainer);
 
       render(element, elementFilmContainer, RenderPosition.BEFOREEND);
       newExtraFilmsLists.push(elementFilmContainer);
@@ -115,7 +138,7 @@ export default class MovieList {
 
   _renderFilmList() {
     for (let i = 0; i < Math.min(this._films.length, QUANTITY_OF_FILM_CARDS_PER_STEP); i++) {
-      this._renderFilmCard(this._filmsContainer, this._films[i], true);
+      this._renderFilmCard(this._filmsContainer, this._films[i]);
     }
 
     if (this._films.length > QUANTITY_OF_FILM_CARDS_PER_STEP) {
@@ -126,6 +149,8 @@ export default class MovieList {
   _renderFilmContainers() {
 
     this._filmsContainer = new FilmContainer();
+
+    this._filmContainers.push(this._filmsContainer);
 
     render(this._siteDefaultFilmsList, this._filmsContainer, RenderPosition.BEFOREEND);
 
@@ -164,10 +189,10 @@ export default class MovieList {
   }
 
   _clearFilms() {
-    Object
-    .values(this._filmPresenter)
-    .forEach((presenter) => presenter.destroy());
-    this._filmPresenter = {};
+    for (let presenter of this._filmPresenter.values()) {
+      presenter.destroy();
+    }
+    this._filmPresenter = new Map();
     this._renderedFilms = QUANTITY_OF_FILM_CARDS_PER_STEP;
   }
 
