@@ -5,8 +5,8 @@ const createGenresSpans = (genres) => {
   return genres.map((genre)=>`<span class="film-details__genre">${genre}</span>`).join(``);
 };
 
-const createFilmDetailsDescription = (film) => {
-  const {name, img, description, rating, filmDuration, filmGenre, ageLimit, director, writters, actors, releaseDate, country} = film;
+const createFilmDetailsDescription = (data) => {
+  const {name, img, description, rating, filmDuration, filmGenre, ageLimit, director, writters, actors, releaseDate, country, isInWatchlist, isWatched, isFavorite} = data;
   return (
     `<div class="film-details__close">
   <button class="film-details__close-btn" type="button">close</button>
@@ -69,26 +69,26 @@ const createFilmDetailsDescription = (film) => {
 </div>
 
 <section class="film-details__controls">
-  <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+  <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isInWatchlist ? `checked` : ``}>
   <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
   <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
   <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
 </section>`
   );
 };
 
 export default class DetailsDescription extends AbstractView {
-  constructor(film) {
+  constructor(data) {
     super();
-    this._film = film;
+    this._data = data;
   }
 
   getTemplate() {
 
-    return createFilmDetailsDescription(this._film);
+    return createFilmDetailsDescription(this._data);
   }
 }

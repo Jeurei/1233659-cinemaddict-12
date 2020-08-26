@@ -1,4 +1,5 @@
 import {getRandomInteger} from '../utils/common.js';
+import {emojiMap} from '../const.js';
 
 const MAX_COMMENTS_QUANTITY = 5;
 
@@ -9,6 +10,8 @@ const getRandomRating = () =>{
   const result = (lower + Math.random() * (upper - lower + 1)).toFixed(quantityOfLetterAfterComma);
   return result > upper ? String(upper) : result;
 };
+
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const postersMap = {
   [`Made For Each Other`]: `./images/posters/made-for-each-other.png`,
@@ -100,6 +103,23 @@ const filmsGenresMap = {
   [`The Man With the Golden Arm`]: [`Drama`, `Romance`, `Noir`]
 };
 
+const createRandomComment = () => {
+  const firstNames = [`Adam`, `Alex`, `Aaron`, `Ben`, `Carl`, `Dan`, `David`, `Edward`, `Fred`, `Frank`, `George`, `Hal`, `Hank`, `Ike`, `John`, `Jack`, `Joe`, `Larry`, `Monte`, `Matthew`, `Mark`, `Nathan`, `Otto`, `Paul`, `Peter`, `Roger`, `Roger`, `Steve`, `Thomas`, `Tim`, `Ty`, `Victor`, `Walter`];
+  const surNames = [`Anderson`, `Ashwoon`, `Aikin`, `Bateman`, `Bongard`, `Bowers`, `Boyd`, `Cannon`, `Cast`, `Deitz`, `Dewalt`, `Ebner`, `Frick`, `Hancock`, `Haworth`, `Hesch`, `Hoffman`, `Kassing`, `Knutson`, `Lawless`, `Lawicki`, `Mccord`, `McCormack`, `Miller`, `Myers`, `Nugent`, `Ortiz`, `Orwig`];
+  const text = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget.`, `Fusce tristique felis at fermentum pharetra.`, `Aliquam id orci ut lectus varius viverra.`, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`, `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`, `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`, `Sed sed nisi sed augue convallis suscipit in sed felis.`, `Aliquam erat volutpat.`, `Nunc fermentum tortor ac porta dapibus.`, `In rutrum ac purus sit amet tempus.`];
+  const dates = [`Yesterday`, `Today`, `2019/12/31 23:59`];
+  const emoji = Object.keys(emojiMap)[getRandomInteger(0, Object.keys(emojiMap).length - 1)];
+  const img = emojiMap[emoji];
+
+  return {
+    name: firstNames[getRandomInteger(0, firstNames.length - 1)] + ` ` + surNames[getRandomInteger(0, surNames.length - 1)],
+    text: text[getRandomInteger(0, text.length - 1)],
+    date: dates[getRandomInteger(0, dates.length - 1)],
+    emoji,
+    img,
+  };
+};
+
 const generateDescription = () => {
   const descriptions = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget.`, `Fusce tristique felis at fermentum pharetra.`, `Aliquam id orci ut lectus varius viverra.`, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`, `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`, `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`, `Sed sed nisi sed augue convallis suscipit in sed felis.`, `Aliquam erat volutpat.`, `Nunc fermentum tortor ac porta dapibus.`, `In rutrum ac purus sit amet tempus.`];
   const quantityOfSentences = getRandomInteger(1, descriptions.length - 1);
@@ -116,7 +136,7 @@ export const generateFilm = () =>{
   const name = generateFilmName();
   const img = postersMap[name];
   const description = generateDescription();
-  const comments = getRandomInteger(0, MAX_COMMENTS_QUANTITY);
+  const comments = new Array(getRandomInteger(0, MAX_COMMENTS_QUANTITY)).fill().map(createRandomComment);
   const rating = getRandomRating();
   const releaseDate = releaseDatesMap[name];
   const director = directorsMap[name];
@@ -129,8 +149,11 @@ export const generateFilm = () =>{
   const isInWatchlist = Boolean(getRandomInteger(0, 1));
   const isWatched = Boolean(getRandomInteger(0, 1));
   const isFavorite = Boolean(getRandomInteger(0, 1));
+  const id = generateId();
 
   return ({
+    userEmoji: ``,
+    id,
     name,
     img,
     description,

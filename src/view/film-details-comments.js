@@ -1,38 +1,25 @@
 import AbstractView from './abstract.js';
-import {getRandomInteger} from '../utils/common.js';
+import {emojiMap} from '../const.js';
 
-const createRandomComments = (quantity) => {
+const createComments = (comments) => {
 
-  if (quantity === 0) {
+  if (comments.length === 0) {
     return ``;
   }
 
-  const firstNames = [`Adam`, `Alex`, `Aaron`, `Ben`, `Carl`, `Dan`, `David`, `Edward`, `Fred`, `Frank`, `George`, `Hal`, `Hank`, `Ike`, `John`, `Jack`, `Joe`, `Larry`, `Monte`, `Matthew`, `Mark`, `Nathan`, `Otto`, `Paul`, `Peter`, `Roger`, `Roger`, `Steve`, `Thomas`, `Tim`, `Ty`, `Victor`, `Walter`];
-  const surNames = [`Anderson`, `Ashwoon`, `Aikin`, `Bateman`, `Bongard`, `Bowers`, `Boyd`, `Cannon`, `Cast`, `Deitz`, `Dewalt`, `Ebner`, `Frick`, `Hancock`, `Haworth`, `Hesch`, `Hoffman`, `Kassing`, `Knutson`, `Lawless`, `Lawicki`, `Mccord`, `McCormack`, `Miller`, `Myers`, `Nugent`, `Ortiz`, `Orwig`];
-  const text = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget.`, `Fusce tristique felis at fermentum pharetra.`, `Aliquam id orci ut lectus varius viverra.`, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`, `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`, `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`, `Sed sed nisi sed augue convallis suscipit in sed felis.`, `Aliquam erat volutpat.`, `Nunc fermentum tortor ac porta dapibus.`, `In rutrum ac purus sit amet tempus.`];
-  const emojiMap = {
-    [`smile`]: `./images/emoji/smile.png`,
-    [`puke`]: `./images/emoji/puke.png`,
-    [`sleeping`]: `./images/emoji/sleeping.png`,
-    [`angry`]: `./images/emoji/angry.png`,
-  };
-  const dates = [`Yesterday`, `Today`, `2019/12/31 23:59`];
   let result = [];
 
-  for (let i = 0; i < quantity; i++) {
-    const emoji = Object.keys(emojiMap)[getRandomInteger(0, Object.keys(emojiMap).length - 1)];
-    const img = emojiMap[emoji];
-
+  for (let i = 0; i < comments.length; i++) {
     let comment =
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-      <img src="${img}" width="55" height="55" alt="emoji-${emoji}">
+      <img src="${comments[i].img}" width="55" height="55" alt="emoji-${comments[i].emoji}">
       </span>
       <div>
-        <p class="film-details__comment-text">${text[getRandomInteger(0, text.length - 1)]}</p>
+        <p class="film-details__comment-text">${comments[i].text}</p>
         <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${firstNames[getRandomInteger(0, firstNames.length - 1)]} ${surNames[getRandomInteger(0, surNames.length - 1)]}</span>
-          <span class="film-details__comment-day">${dates[getRandomInteger(0, dates.length - 1)]}</span>
+          <span class="film-details__comment-author">${comments[i].name}</span>
+          <span class="film-details__comment-day">${comments[i].date}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
@@ -42,18 +29,24 @@ const createRandomComments = (quantity) => {
   return result.join(``);
 };
 
-const createFilmDetailsComments = (quantity) => {
+const createUserEmojiTemplate = (userEmoji) => {
+  return userEmoji === `` ? `` : `<img src="${emojiMap[userEmoji]}" width="55" height="55" alt="emoji-smile">`;
+};
+
+const createFilmDetailsComments = (comments, userEmoji) => {
 
   return (
     `<section class="film-details__comments-wrap">
-    <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${quantity}</span></h3>
+    <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
     <ul class="film-details__comments-list">
-      ${createRandomComments(quantity)}
+      ${createComments(comments)}
     </ul>
 
     <div class="film-details__new-comment">
-      <div for="add-emoji" class="film-details__add-emoji-label"></div>
+      <div for="add-emoji" class="film-details__add-emoji-label">
+        ${createUserEmojiTemplate(userEmoji)}
+      </div>
 
       <label class="film-details__comment-label">
         <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -86,13 +79,14 @@ const createFilmDetailsComments = (quantity) => {
 };
 
 export default class DetailsComments extends AbstractView {
-  constructor(quantityOfComments) {
+  constructor(comments, userEmoji) {
     super();
-    this._quantity = quantityOfComments;
+    this._comments = comments;
+    this._userEmoji = userEmoji;
   }
 
   getTemplate() {
-    return createFilmDetailsComments(this._quantity);
+    return createFilmDetailsComments(this._comments, this._userEmoji);
   }
 
 }
