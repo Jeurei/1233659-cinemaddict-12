@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
     return 0;
@@ -14,8 +16,26 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-export const humanizeFilmDate = (date) => {
-  return date.toLocaleString(`en-US`, {month: `long`, day: `numeric`, year: `numeric`});
+export const formatDate = (date, dateCase) => {
+
+  if (!(date instanceof Date)) {
+    return ``;
+  }
+
+  switch (dateCase) {
+    case `year`:
+      return moment(date).format(`YYYY`);
+    case `releaseDate`:
+      return moment(date).format(`DD MMMM YYYY`);
+    case `comment`:
+      return moment(date).calendar(null, {
+        sameDay: `[Today]`,
+        lastDay: `[Yesterday]`,
+        sameElse: `L HH:mm:ss`
+      });
+  }
+
+  return ``;
 };
 
 export const sortFilmsByDate = (filmA, filmB) => {
