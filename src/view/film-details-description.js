@@ -1,5 +1,6 @@
 import AbstractView from './abstract.js';
-import {humanizeFilmDate} from '../utils/films.js';
+import {formatDate} from '../utils/films.js';
+import {DateFormatsMap} from '../const.js';
 
 const createGenresSpans = (genres) => {
   return genres.map((genre)=>`<span class="film-details__genre">${genre}</span>`).join(``);
@@ -45,7 +46,7 @@ const createFilmDetailsDescription = (data) => {
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Release Date</td>
-        <td class="film-details__cell">${humanizeFilmDate(releaseDate)}</td>
+        <td class="film-details__cell">${formatDate(releaseDate, DateFormatsMap.RELEASEDATE)}</td>
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Runtime</td>

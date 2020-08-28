@@ -131,7 +131,7 @@ export default class MovieList {
 
     this._siteExtraFilmsLists = newExtraFilmsLists;
 
-    this._siteExtraFilmsLists.forEach(function (element, i) {
+    this._siteExtraFilmsLists.forEach((element, i) => {
       this._renderExtraFilmsLists(element, i);
     }, this);
   }
@@ -209,7 +209,7 @@ export default class MovieList {
       return;
     }
 
-    this._sortedFilms = [sortObjectsArrayByProperty([...this._films], `rating`), sortObjectsArrayByProperty([...this._films], `comments`)];
+    this._sortedFilms = [sortObjectsArrayByProperty([...this._films], `rating`), sortObjectsArrayByProperty([...this._films], `quantityOfComments`)];
     this._extraFilmsLists = new Array(QUANTITY_OF_EXTRA_FILMS_LISTS).fill().map(() => new SiteFilmsList(EXTRA_FILMS_LIST_CLASS));
 
     this._renderFilmContainers();

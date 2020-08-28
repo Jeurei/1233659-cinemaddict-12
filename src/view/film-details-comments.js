@@ -1,5 +1,6 @@
 import AbstractView from './abstract.js';
-import {emojiMap} from '../const.js';
+import {formatDate} from '../utils/films.js';
+import {emojiMap, DateFormatsMap} from '../const.js';
 
 const createComments = (comments) => {
 
@@ -19,7 +20,7 @@ const createComments = (comments) => {
         <p class="film-details__comment-text">${comments[i].text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].name}</span>
-          <span class="film-details__comment-day">${comments[i].date}</span>
+          <span class="film-details__comment-day">${formatDate(comments[i].date, DateFormatsMap.COMMENT)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
