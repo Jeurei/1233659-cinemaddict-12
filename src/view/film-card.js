@@ -1,6 +1,5 @@
 import AbstractView from './abstract.js';
-import {formatDate} from '../utils/films.js';
-import {DateFormatsMap} from '../const.js';
+import {formatDateYear} from '../utils/films.js';
 
 const createSiteFilmCard = (film) => {
   const {name, rating, releaseDate, filmDuration, filmGenre, description, img, comments, isInWatchlist, isWatched, isFavorite} = film;
@@ -14,7 +13,7 @@ const createSiteFilmCard = (film) => {
     <h3 class="film-card__title">${name}</h3>
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${formatDate(releaseDate, DateFormatsMap.YEAR)}</span>
+      <span class="film-card__year">${formatDateYear(releaseDate)}</span>
       <span class="film-card__duration">${filmDuration}</span>
       <span class="film-card__genre">${filmGenre[0]}</span>
     </p>

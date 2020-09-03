@@ -1,4 +1,6 @@
 export const ESC_CODE = `Escape`;
+export const CTRL_CODE = `ControlLeft`;
+export const ENTER_CODE = `Enter`;
 
 export const SortType = {
   DEFAULT: `default`,
@@ -13,8 +15,21 @@ export const emojiMap = {
   angry: `./images/emoji/angry.png`,
 };
 
-export const DateFormatsMap = {
-  YEAR: `year`,
-  RELEASEDATE: `releaseDate`,
-  COMMENT: `comment`,
+export const UserAction = {
+  UPDATE_FILM: `UPDATE_FILM`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
 };

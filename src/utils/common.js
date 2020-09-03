@@ -11,16 +11,8 @@ export const sortObjectsArrayByProperty = (array, property) => {
   return array.sort((a, b) => b[property] - a[property]).slice(0, QUANTITY_OF_ELEMENTS_IN_SORTED_ARRAYS);
 };
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
+export const getRandomName = () => {
+  const firstNames = [`Adam`, `Alex`, `Aaron`, `Ben`, `Carl`, `Dan`, `David`, `Edward`, `Fred`, `Frank`, `George`, `Hal`, `Hank`, `Ike`, `John`, `Jack`, `Joe`, `Larry`, `Monte`, `Matthew`, `Mark`, `Nathan`, `Otto`, `Paul`, `Peter`, `Roger`, `Roger`, `Steve`, `Thomas`, `Tim`, `Ty`, `Victor`, `Walter`];
+  const surNames = [`Anderson`, `Ashwoon`, `Aikin`, `Bateman`, `Bongard`, `Bowers`, `Boyd`, `Cannon`, `Cast`, `Deitz`, `Dewalt`, `Ebner`, `Frick`, `Hancock`, `Haworth`, `Hesch`, `Hoffman`, `Kassing`, `Knutson`, `Lawless`, `Lawicki`, `Mccord`, `McCormack`, `Miller`, `Myers`, `Nugent`, `Ortiz`, `Orwig`];
+  return firstNames[getRandomInteger(0, firstNames.length - 1)] + ` ` + surNames[getRandomInteger(0, surNames.length - 1)];
 };
