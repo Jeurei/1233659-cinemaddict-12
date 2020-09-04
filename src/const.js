@@ -1,5 +1,4 @@
 export const ESC_CODE = `Escape`;
-export const CTRL_CODE = `ControlLeft`;
 export const ENTER_CODE = `Enter`;
 
 export const SortType = {

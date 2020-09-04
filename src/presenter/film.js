@@ -25,6 +25,7 @@ export default class FilmPresenter {
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
   }
 
   init(film) {
@@ -39,6 +40,7 @@ export default class FilmPresenter {
     this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
     this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
     this._filmPopupComponent.setDeleteClickHandler(this._deleteClickHandler);
+    this._filmPopupComponent.setAddCommentKeyDown(this._addCommentKeyDown);
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
       render(this._filmContainer, this._filmComponent, RenderPosition.BEFOREEND);
@@ -165,6 +167,13 @@ export default class FilmPresenter {
   _deleteClickHandler(film) {
     this._changeData(
         UserAction.DELETE_COMMENT,
+        UpdateType.MINOR,
+        film);
+  }
+
+  _addCommentKeyDown(film) {
+    this._changeData(
+        UserAction.ADD_COMMENT,
         UpdateType.MINOR,
         film);
   }

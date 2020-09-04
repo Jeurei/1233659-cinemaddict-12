@@ -2,7 +2,7 @@ import DetailsDescription from './film-details-description.js';
 import DetailsComments from './film-details-comments.js';
 import Smart from './smart.js';
 import {getRandomName} from '../utils/common.js';
-import {emojiMap, CTRL_CODE, ENTER_CODE} from '../const.js';
+import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
 const createSiteFilmDetailsPopup = (data) => {
   const {comments, userEmoji} = data;
@@ -70,9 +70,14 @@ export default class FilmPopup extends Smart {
   _onEmojiClickHandler(evt) {
     let emoji = evt.currentTarget.getAttribute(`for`).split(`-`)[1];
     this._userEmoji = emoji;
+
     this.updateData({
       userEmoji: emoji
     });
+
+    if (this._userText) {
+      this.getElement().querySelector(`.film-details__comment-input`).value = this._userText;
+    }
   }
 
   _onCloseButtonClick(evt) {
@@ -86,8 +91,10 @@ export default class FilmPopup extends Smart {
   }
 
   _keyDownHandler(evt) {
-    evt.preventDefault();
-    this._callback.keydown(evt);
+    if (evt.key === ESC_CODE) {
+      evt.preventDefault();
+      this._callback.keydown(evt);
+    }
   }
 
   setKeydownHandler(callback) {
@@ -154,18 +161,20 @@ export default class FilmPopup extends Smart {
   }
 
   _addCommentKeyDown(evt) {
-    evt.preventDefault();
-    console.log(CTRL_CODE);
-    if (evt.key === CTRL_CODE && evt.key === ENTER_CODE && this._userEmoji && this._userText) {
-      const newComment = this._createComment(this._userEmoji, this._userText);
+    if ((evt.ctrlKey && evt.key === ENTER_CODE) && this._userEmoji && this._userText) {
+      const newComments = [...this._data.comments, this._createComment(this._userEmoji, this._userText)];
       this.updateData(
           Object.assign(
               {},
               this._data,
-              {comments: [...this.data.comments.push(newComment)]}
+              {
+                comments: newComments
+              }
           )
       );
+      this._callback.addComment(this._data);
     }
+
   }
 
   setAddCommentKeyDown(callback) {
