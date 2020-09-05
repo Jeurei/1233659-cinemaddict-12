@@ -2,6 +2,7 @@ import Film from '../view/film-card.js';
 import FilmPopup from '../view/film-details-popup.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {ESC_CODE} from '../const.js';
+import {UserAction, UpdateType} from "../const.js";
 const Mode = {
   DEFAULT: `DEFAULT`,
   OPENED: `OPENED`
@@ -23,6 +24,8 @@ export default class FilmPresenter {
     this._clickHandler = this._clickHandler.bind(this);
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
   }
 
   init(film) {
@@ -36,6 +39,8 @@ export default class FilmPresenter {
     this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
     this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
+    this._filmPopupComponent.setDeleteClickHandler(this._deleteClickHandler);
+    this._filmPopupComponent.setAddCommentKeyDown(this._addCommentKeyDown);
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
       render(this._filmContainer, this._filmComponent, RenderPosition.BEFOREEND);
@@ -46,7 +51,7 @@ export default class FilmPresenter {
       replace(this._filmComponent, prevFilmComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === Mode.OPENED) {
       this._filmPopupComponent.setCloseClickHandler(this._clickClosePopupHandler);
       this._filmPopupComponent.setKeydownHandler(this._escKeyDownHandler);
       replace(this._filmPopupComponent, prevFilmPopupComponent);
@@ -58,7 +63,7 @@ export default class FilmPresenter {
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToCard();
+      this._closePopup();
     }
   }
 
@@ -75,12 +80,15 @@ export default class FilmPresenter {
     replace(this._filmComponent, prevFilmComponent);
   }
 
-  destroy() {
+  destroy(isPopupOppened) {
     remove(this._filmComponent);
-    remove(this._filmPopupComponent);
+    if (!isPopupOppened) {
+      remove(this._filmPopupComponent);
+    }
   }
 
   _closePopup() {
+    this._mode = Mode.DEFAULT;
     document.querySelector(`.film-details`).remove();
 
     this._filmPopupComponent.removeCloseHandlers();
@@ -91,6 +99,7 @@ export default class FilmPresenter {
     if (evt.key === ESC_CODE) {
       evt.preventDefault();
       this._filmPopupComponent.reset(this._film);
+      this._mode = Mode.DEFAULT;
       this._closePopup();
     }
 
@@ -98,6 +107,8 @@ export default class FilmPresenter {
 
   _addToWatchListClickHandler() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -110,6 +121,8 @@ export default class FilmPresenter {
 
   _addToWatchedClickHandler() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -122,6 +135,8 @@ export default class FilmPresenter {
 
   _addToFavoriteClickHandler() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -141,11 +156,25 @@ export default class FilmPresenter {
   _clickHandler() {
     this._renderFilmPopup();
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = Mode.OPENED;
   }
 
   _clickClosePopupHandler() {
     this._closePopup();
     this._mode = Mode.DEFAULT;
+  }
+
+  _deleteClickHandler(film) {
+    this._changeData(
+        UserAction.DELETE_COMMENT,
+        UpdateType.MINOR,
+        film);
+  }
+
+  _addCommentKeyDown(film) {
+    this._changeData(
+        UserAction.ADD_COMMENT,
+        UpdateType.MINOR,
+        film);
   }
 }

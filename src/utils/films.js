@@ -16,26 +16,35 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-export const formatDate = (date, dateCase) => {
+export const formatDateYear = (date)=>{
 
   if (!(date instanceof Date)) {
     return ``;
   }
 
-  switch (dateCase) {
-    case `year`:
-      return moment(date).format(`YYYY`);
-    case `releaseDate`:
-      return moment(date).format(`DD MMMM YYYY`);
-    case `comment`:
-      return moment(date).calendar(null, {
-        sameDay: `[Today]`,
-        lastDay: `[Yesterday]`,
-        sameElse: `L HH:mm:ss`
-      });
+  return moment(date).format(`YYYY`);
+};
+
+export const formatDateReleaseDate = (date) => {
+
+  if (!(date instanceof Date)) {
+    return ``;
   }
 
-  return ``;
+  return moment(date).format(`DD MMMM YYYY`);
+};
+
+export const formatDateComment = (date) => {
+
+  if (!(date instanceof Date)) {
+    return ``;
+  }
+
+  return moment(date).calendar(null, {
+    sameDay: `[Today]`,
+    lastDay: `[Yesterday]`,
+    sameElse: `L HH:mm:ss`
+  });
 };
 
 export const sortFilmsByDate = (filmA, filmB) => {
@@ -50,4 +59,8 @@ export const sortFilmsByDate = (filmA, filmB) => {
 
 export const sortFilmsByRating = (filmA, filmB) => {
   return filmB.rating - filmA.rating;
+};
+
+export const sortFilmsByComments = (filmA, filmB) =>{
+  return filmB.comments.length - filmA.comments.length;
 };
