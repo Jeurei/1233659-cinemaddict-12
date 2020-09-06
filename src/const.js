@@ -32,3 +32,8 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+
+export const MenuItem = {
+  FILTER: `filter`,
+  STATISTICS: `statistics`
+};

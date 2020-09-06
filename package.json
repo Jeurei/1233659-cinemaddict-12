@@ -20,5 +20,8 @@
   },
   "engines": {
     "node": "10"
+  },
+  "dependencies": {
+    "he": "1.2.0"
   }
 }
