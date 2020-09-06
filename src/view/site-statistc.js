@@ -1,7 +1,9 @@
 import Smart from './smart.js';
 import {remove} from '../utils/render.js';
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createSiteStatistic = () =>{
+const createSiteStatistic = (films) =>{
   return (
     `<section class="statistic">
     <p class="statistic__rank">
@@ -32,7 +34,7 @@ const createSiteStatistic = () =>{
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${[...films].filter((movie)=>movie.isWatched).length} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
@@ -53,8 +55,13 @@ const createSiteStatistic = () =>{
 };
 
 export default class Statistcs extends Smart {
+  constructor(films) {
+    super();
+
+    this._films = films;
+  }
   getTemplate() {
-    return createSiteStatistic();
+    return createSiteStatistic(this._films);
   }
 
   restoreHandlers() {

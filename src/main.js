@@ -38,7 +38,7 @@ const handleSiteMenuClick = (menuItem) => {
       moviePresenter.init();
       break;
     case MenuItem.STATISTICS:
-      siteStatistic = new SiteStatistic();
+      siteStatistic = new SiteStatistic(moviesModel.getMovies());
       moviePresenter.destroy();
       render(siteMainElement, siteStatistic, RenderPosition.BEFOREEND);
       currentMenuMode = menuItem;
