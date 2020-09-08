@@ -9,7 +9,7 @@ import ShowMoreButton from '../view/site-show-more-button.js';
 import {filter} from "../utils/filter.js";
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortFilmsByDate, sortFilmsByRating, sortFilmsByComments} from '../utils/films.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 const EXTRA_FILMS_LIST_TITLES = [`Top rated`, `Top commented`];
 const DEFAULT_FILM_LIST_CLASS = `films-list`;
@@ -65,6 +65,7 @@ export default class MovieList {
 
   _getFilms() {
     const filterType = this._filterModel.getFilter();
+
     const films = [...this._moviesModel.getMovies()];
 
     const filtredFilms = filter[filterType](films);
@@ -109,7 +110,7 @@ export default class MovieList {
         }, this);
         break;
       case UpdateType.MINOR:
-        this._clearMovieList(true);
+        this._clearMovieList({isPopupOppened: true});
         this._renderMovies();
         break;
       case UpdateType.MAJOR:
@@ -262,6 +263,9 @@ export default class MovieList {
   }
 
   _renderMovies() {
+    if (this._filterModel.getFilter() === FilterType.STATS) {
+      return;
+    }
 
     if (!this._moviesModel.getMovies().length) {
       this._renderNoData();

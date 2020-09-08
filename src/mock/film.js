@@ -84,13 +84,13 @@ const countriesMap = {
 };
 
 const filmsDurationMap = {
-  [`Made For Each Other`]: `1h 47m`,
-  [`Popeye the Sailor meets Sindbad the Sailor`]: `16m`,
-  [`Sagebrush Trail`]: `54m`,
-  [`Santa Claus Conquers the Martians`]: `1h 21m`,
-  [`The Dance of Life`]: `1h 55m`,
-  [`The Great Flamarion`]: `1h 25m`,
-  [`The Man With the Golden Arm`]: `1h 59m`
+  [`Made For Each Other`]: 107,
+  [`Popeye the Sailor meets Sindbad the Sailor`]: 16,
+  [`Sagebrush Trail`]: 54,
+  [`Santa Claus Conquers the Martians`]: 81,
+  [`The Dance of Life`]: 115,
+  [`The Great Flamarion`]: 85,
+  [`The Man With the Golden Arm`]: 119
 };
 
 const filmsGenresMap = {

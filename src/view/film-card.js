@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {formatDateYear} from '../utils/films.js';
+import {formatDateYear, getTimeFromMins} from '../utils/films.js';
 
 const createSiteFilmCard = (film) => {
   const {name, rating, releaseDate, filmDuration, filmGenre, description, img, comments, isInWatchlist, isWatched, isFavorite} = film;
@@ -14,7 +14,7 @@ const createSiteFilmCard = (film) => {
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${formatDateYear(releaseDate)}</span>
-      <span class="film-card__duration">${filmDuration}</span>
+      <span class="film-card__duration">${getTimeFromMins(filmDuration)}</span>
       <span class="film-card__genre">${filmGenre[0]}</span>
     </p>
     <img src="${img}" alt="${name}" class="film-card__poster">

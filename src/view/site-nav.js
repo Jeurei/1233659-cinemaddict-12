@@ -1,28 +1,28 @@
 import AbstractView from './abstract.js';
 import {FilterType, MenuItem} from '../const.js';
+const ACTIVECLASS = `main-navigation__item--active`;
 
-const createSiteNav = (filters, currentFilterType) => {
+const createSiteNav = (filters, currentMenuItem) => {
   const [watchlist, history, favorite] = filters.map((filter) => filter.count);
-  const activeClass = `main-navigation__item--active`;
 
   return (
     `<nav class="main-navigation">
     <div class="main-navigation__items">
-      <a href="#all" class="main-navigation__item ${currentFilterType === FilterType.ALL ? activeClass : ``}" data-item="${MenuItem.FILTER}">All movies</a>
-      <a href="#watchlist" class="main-navigation__item ${currentFilterType === FilterType.WATCHLIST ? activeClass : ``}" data-item="${MenuItem.FILTER}">Watchlist <span class="main-navigation__item-count">${watchlist}</span></a>
-      <a href="#history" class="main-navigation__item ${currentFilterType === FilterType.HISTORY ? activeClass : ``}" data-item="${MenuItem.FILTER}">History <span class="main-navigation__item-count">${history}</span></a>
-      <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? activeClass : ``}" data-item="${MenuItem.FILTER}">Favorites <span class="main-navigation__item-count">${favorite}</span></a>
+      <a href="#all" class="main-navigation__item ${currentMenuItem === FilterType.ALL ? ACTIVECLASS : ``}" data-item="${MenuItem.FILTER}">All movies</a>
+      <a href="#watchlist" class="main-navigation__item ${currentMenuItem === FilterType.WATCHLIST ? ACTIVECLASS : ``}" data-item="${MenuItem.FILTER}">Watchlist <span class="main-navigation__item-count">${watchlist}</span></a>
+      <a href="#history" class="main-navigation__item ${currentMenuItem === FilterType.HISTORY ? ACTIVECLASS : ``}" data-item="${MenuItem.FILTER}">History <span class="main-navigation__item-count">${history}</span></a>
+      <a href="#favorites" class="main-navigation__item ${currentMenuItem === FilterType.FAVORITES ? ACTIVECLASS : ``}" data-item="${MenuItem.FILTER}">Favorites <span class="main-navigation__item-count">${favorite}</span></a>
     </div>
-    <a href="#stats" class="main-navigation__additional" data-item="${MenuItem.STATISTICS}">Stats</a>
+    <a href="#stats" class="main-navigation__additional ${currentMenuItem === FilterType.STATS ? ACTIVECLASS : ``}" data-item="${MenuItem.STATISTICS}">Stats</a>
   </nav>`
   );
 };
 
 export default class SiteNav extends AbstractView {
-  constructor(filters, currentFilterType) {
+  constructor(filters, currentMenuItem) {
     super();
     this._filters = filters;
-    this._currentFilterType = currentFilterType;
+    this._currentMenuItem = currentMenuItem;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
     this._menuClickHandler = this._menuClickHandler.bind(this);
@@ -30,7 +30,7 @@ export default class SiteNav extends AbstractView {
 
   getTemplate() {
 
-    return createSiteNav(this._filters, this._currentFilterType);
+    return createSiteNav(this._filters, this._currentMenuItem);
   }
 
 
@@ -42,6 +42,7 @@ export default class SiteNav extends AbstractView {
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((item) => item.addEventListener(`click`, this._filterTypeChangeHandler));
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
   }
 
   _menuClickHandler(evt) {

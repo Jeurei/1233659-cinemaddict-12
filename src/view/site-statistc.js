@@ -1,15 +1,40 @@
 import Smart from './smart.js';
 import {remove} from '../utils/render.js';
+import {getHoursFromMins, getRemainMins} from '../utils/films.js';
+import {getUserRank} from '../utils/common.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createSiteStatistic = (films) =>{
+const getTheMostFrequentGenre = (films) => {
+
+  let mapOfGenres = {};
+
+  films.forEach((film) =>{
+    film.filmGenre.forEach((genre) => {
+      if (genre in mapOfGenres) {
+        mapOfGenres[genre] += 1;
+      } else {
+        mapOfGenres[genre] = 1;
+      }
+    });
+  });
+
+  const maxValue = Math.max.apply(null, Object.values(mapOfGenres));
+
+  return Object.keys(mapOfGenres).filter((genre) => mapOfGenres[genre] === maxValue);
+};
+
+const createSiteStatistic = (films) => {
+  const watchedFilms = [...films].filter((movie)=>movie.isWatched);
+  let initialValue = 0;
+  const totalTimeWatched = watchedFilms.reduce((accumulator, currentMovie) => accumulator + currentMovie.filmDuration, initialValue);
+
   return (
     `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${getUserRank(watchedFilms.length)}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -34,15 +59,15 @@ const createSiteStatistic = (films) =>{
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${[...films].filter((movie)=>movie.isWatched).length} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedFilms.length} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${watchedFilms.length ? `${getHoursFromMins(totalTimeWatched)}<span class="statistic__item-description">h</span> ${getRemainMins(totalTimeWatched)} <span class="statistic__item-description">m</span>` : ``}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${getTheMostFrequentGenre(watchedFilms)[0]}</p>
       </li>
     </ul>
 

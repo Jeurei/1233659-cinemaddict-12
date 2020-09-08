@@ -1,6 +1,6 @@
 const QUANTITY_OF_FILM_CARDS = 20;
 
-import UserProfile from './view/user-profile.js';
+import UserProfilePresenter from './presenter/user-profile.js';
 import SiteFooterStatistic from './view/footer-statisctic.js';
 import {generateFilm} from './mock/film.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -19,9 +19,11 @@ const moviesModel = new MovieModel();
 let currentMenuMode = MenuItem.FILTER;
 moviesModel.setMovies(films);
 const filtersModel = new FilterModel();
+const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
 let siteStatistic = null;
 
-render(siteHeaderElement, new UserProfile(([...moviesModel.getMovies()].filter((movie)=>movie.isWatched)).length), RenderPosition.BEFOREEND);
+userProfilePresenter.init();
+
 render(siteFooterElement, new SiteFooterStatistic(films.length), RenderPosition.BEFOREEND);
 const filterPresenter = new FilterPresenter(siteMainElement, filtersModel, moviesModel);
 const moviePresenter = new MovieList(siteMainElement, moviesModel, filtersModel);
@@ -33,15 +35,15 @@ const handleSiteMenuClick = (menuItem) => {
 
   switch (menuItem) {
     case MenuItem.FILTER:
-      siteStatistic.destroy();
       currentMenuMode = menuItem;
+      siteStatistic.destroy();
       moviePresenter.init();
       break;
     case MenuItem.STATISTICS:
+      currentMenuMode = menuItem;
       siteStatistic = new SiteStatistic(moviesModel.getMovies());
       moviePresenter.destroy();
       render(siteMainElement, siteStatistic, RenderPosition.BEFOREEND);
-      currentMenuMode = menuItem;
       break;
   }
 

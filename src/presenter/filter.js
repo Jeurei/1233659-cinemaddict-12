@@ -20,7 +20,6 @@ export default class Filter {
 
   init() {
     this._currentFilter = this._filterModel.getFilter();
-
     const filters = this._getFilters();
     const prevFilterComponent = this._siteNavComponent;
 
@@ -36,15 +35,19 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  _restoreHandlers() {
+    this._siteNavComponent.setMenuClickHandler(this._menuClickHandler);
+  }
+
   _handleModelEvent() {
     this.init();
+    this._restoreHandlers();
   }
 
   _handleFilterTypeChange(filterType) {
     if (this._currentFilter === filterType) {
       return;
     }
-
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
@@ -71,6 +74,7 @@ export default class Filter {
   }
 
   setMenuClickHandler(callback) {
+    this._menuClickHandler = callback;
     this._siteNavComponent.setMenuClickHandler(callback);
   }
 }
