@@ -78,3 +78,6 @@ export function getHoursFromMins(mins) {
 export function getRemainMins(mins) {
   return mins % 60;
 }
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+

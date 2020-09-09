@@ -15,13 +15,13 @@ const createComments = (comments) => {
     let comment =
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-      <img src="${comments[i].img}" width="55" height="55" alt="emoji-${comments[i].emoji}">
+      <img src="${comments[i]}" width="55" height="55" alt="emoji-${comments[i]}">
       </span>
       <div>
-        <p class="film-details__comment-text">${he.encode(comments[i].text)}</p>
+        <p class="film-details__comment-text">${he.encode(comments[i])}</p>
         <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${comments[i].name}</span>
-          <span class="film-details__comment-day">${formatDateComment(comments[i].date)}</span>
+          <span class="film-details__comment-author">${comments[i]}</span>
+          <span class="film-details__comment-day">${formatDateComment(comments[i])}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

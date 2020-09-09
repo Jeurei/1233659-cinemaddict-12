@@ -4,6 +4,7 @@ import SiteMainContentContainers from '../view/site-films-containers';
 import SiteFilmsList from '../view/site-films-list';
 import FilmListTitle from '../view/films-list-title.js';
 import FilmContainer from '../view/site-films-container.js';
+import LoadingView from "../view/loading.js";
 import SiteNoData from '../view/site-no-data.js';
 import ShowMoreButton from '../view/site-show-more-button.js';
 import {filter} from "../utils/filter.js";
@@ -27,6 +28,8 @@ export default class MovieList {
     this._siteNoData = new SiteNoData();
     this._currentSortType = SortType.DEFAULT;
     this._filmPresenter = new Map();
+    this._isLoading = true;
+    this._loadingComponent = new LoadingView();
     this._filmContainers = [];
     this._renderedFilms = QUANTITY_OF_FILM_CARDS_PER_STEP;
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -117,6 +120,11 @@ export default class MovieList {
         this._clearMovieList({resetRenderedFilms: true, resetSortType: true, isPopupOppened: true});
         this._renderMovies();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderMovies();
+        break;
     }
   }
 
@@ -129,13 +137,17 @@ export default class MovieList {
   }
 
   _renderNoData() {
-    render(this._filmsList, this._siteNoData, RenderPosition.BEFOREEND);
+    render(this._movieListContainer, this._siteNoData, RenderPosition.BEFOREEND);
   }
 
   _renderFilmCard(filmContainer, film, i = 0) {
     const filmPresenter = new FilmPresenter(filmContainer, this._handleViewAction, this._handleModeChange);
     filmPresenter.init(film);
     this._filmPresenter.set([film.id, i], filmPresenter);
+  }
+
+  _renderLoading() {
+    render(this._movieListContainer, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 
   _renderFilms(films) {
@@ -237,6 +249,7 @@ export default class MovieList {
     this._filmPresenter = new Map();
     remove(this._sortComponent);
     remove(this._showMoreButton);
+    remove(this._loadingComponent);
     remove(this._siteNoData);
 
     if (resetRenderedFilms) {
@@ -263,6 +276,13 @@ export default class MovieList {
   }
 
   _renderMovies() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
+    console.log(this._moviesModel.getMovies());
+
     if (this._filterModel.getFilter() === FilterType.STATS) {
       return;
     }
