@@ -46,7 +46,6 @@ export default class FilmPopup extends Smart {
   }
 
   _setInnerHandlers() {
-    console.log(`FilmPopup -> _setInnerHandlers -> this.getElement()`, this.getElement());
     this.getElement().querySelectorAll(`.film-details__emoji-label`).forEach((emoji) => emoji.addEventListener(`click`, this._onEmojiClickHandler));
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);
     this.getElement().querySelector(`#watchlist`).addEventListener(`change`, this._addToWatchListClickHandler);

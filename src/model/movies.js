@@ -146,4 +146,21 @@ export default class Movies extends Observer {
 
     return adaptedFilm;
   }
+
+  static adaptCommentsToClient(comments) {
+    const adaptedComments = [...comments].map((comment) =>{
+      const newCommentObject = Object.assign({}, comment, {
+        name: comment.author,
+        text: comment.comment,
+        date: new Date(comment.date),
+        emoji: comment.emotion
+      });
+
+      delete newCommentObject.author;
+      delete newCommentObject.comment;
+      delete newCommentObject.emotion;
+      return newCommentObject;
+    });
+    return adaptedComments;
+  }
 }

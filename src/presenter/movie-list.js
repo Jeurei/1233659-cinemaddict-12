@@ -281,8 +281,6 @@ export default class MovieList {
       return;
     }
 
-    console.log(this._moviesModel.getMovies());
-
     if (this._filterModel.getFilter() === FilterType.STATS) {
       return;
     }

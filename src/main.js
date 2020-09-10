@@ -47,13 +47,21 @@ filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 moviePresenter.init();
 
-api.getMovies().then((movies) => {
-  moviesModel.setMovies(UpdateType.INIT, movies);
-  const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
-  userProfilePresenter.init();
-  render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);
+api.getMovies()
+.then((movies) => {
+  movies.map(MovieModel.adaptToClient);
+  movies.forEach((movie) => {
+    api.getComments(movie.id).then((comments) => {
+      movie.comments = MovieModel.adaptCommentsToClient(comments);
+    });
+    //  moviesModel.setMovies(UpdateType.INIT, movies);
+    //  const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
+    //  userProfilePresenter.init();
+    //  render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);
+  });
 })
 .catch(() => {
   moviesModel.setMovies(UpdateType.INIT, []);
 });
+
 

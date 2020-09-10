@@ -4,7 +4,6 @@ import {emojiMap} from '../const.js';
 import he from "he";
 
 const createComments = (comments) => {
-
   if (comments.length === 0) {
     return ``;
   }
