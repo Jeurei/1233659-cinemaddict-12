@@ -19,10 +19,11 @@ const QUANTITY_OF_FILM_CARDS_PER_STEP = 5;
 const QUANTITY_OF_EXTRA_FILMS_LISTS = 2;
 
 export default class MovieList {
-  constructor(movieListContainer, moviesModel, filterModel) {
+  constructor(movieListContainer, moviesModel, filterModel, api) {
     this._movieListContainer = movieListContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
+    this._api = api;
     this._sortComponent = null;
     this._showMoreButton = null;
     this._siteNoData = new SiteNoData();
@@ -83,25 +84,43 @@ export default class MovieList {
     return filtredFilms;
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, commentId) {
+    let film = null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this._moviesModel.updateFilms(updateType, update);
+        this._api.updateFilm(update).then((movie) => {
+          film = movie;
+          return this._api.getComments(movie.id);
+        })
+        .then((comments) => {
+          film.comments = comments;
+          this._moviesModel.updateFilms(updateType, film);
+        });
         break;
       case UserAction.ADD_COMMENT:
-        this._moviesModel.addComment(updateType, update);
+        film = update;
+        this._api.addComment(update, update.comments).then((comments) => {
+          film.comments = comments;
+          this._moviesModel.addComment(updateType, film);
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter === film.id) {
+              presenter.init(film);
+            }
+          }
+        });
         break;
       case UserAction.DELETE_COMMENT:
-        this._moviesModel.deleteComment(updateType, update);
+        this._api.deleteComment(commentId).then(() => {
+          this._moviesModel.deleteComment(updateType, update);
+        });
         break;
     }
   }
 
   _handleModelEvent(updateType, updatedFilm) {
     const arrayOfPresenters = [];
-
     for (let presenter of this._filmPresenter.keys()) {
-      if (presenter === updatedFilm.id) {
+      if (presenter[0] === updatedFilm.id) {
         arrayOfPresenters.push(presenter);
       }
     }

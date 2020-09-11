@@ -2,7 +2,9 @@ import MovieModel from './model/movies.js';
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -20,14 +22,16 @@ export default class Api {
     return this._load({
       url: `movies`
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((movies) => movies.map(MovieModel.adaptToClient));
   }
 
   getComments(filmId) {
     return this._load({
       url: `comments/${filmId}`
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((comments) => comments.map(MovieModel.adaptCommentsToClient));
   }
 
   updateFilm(film) {
@@ -41,6 +45,29 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(MovieModel.adaptToClient);
+  }
+
+  addComment(film, comments) {
+    let lastComment = comments[comments.length - 1];
+    return this._load({
+      url: `comments/${film.id}`,
+      method: Method.POST,
+      body: JSON.stringify(MovieModel.adaptCommentToServer(lastComment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+    .then(Api.toJSON)
+    .then((comment) =>{
+      comments = comment.comments;
+      let adaptedComments = comments.map(MovieModel.adaptCommentsToClient);
+      return Promise.resolve(adaptedComments);
+    });
+  }
+
+  deleteComment(comment) {
+    return this._load({
+      url: `comments/${comment.id}`,
+      method: Method.DELETE,
+    });
   }
 
   _load({

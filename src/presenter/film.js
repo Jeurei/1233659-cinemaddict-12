@@ -33,12 +33,15 @@ export default class FilmPresenter {
     const prevFilmComponent = this._filmComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
     this._filmComponent = new Film(film);
-    this._filmPopupComponent = new FilmPopup(film, this._updateCard);
+    this._filmPopupComponent = new FilmPopup(film);
 
     this._filmComponent.setClickHandler(this._clickHandler);
     this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
     this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
+    this._filmPopupComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
+    this._filmPopupComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
+    this._filmPopupComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
     this._filmPopupComponent.setDeleteClickHandler(this._deleteClickHandler);
     this._filmPopupComponent.setAddCommentKeyDown(this._addCommentKeyDown);
 
@@ -105,13 +108,13 @@ export default class FilmPresenter {
 
   }
 
-  _addToWatchListClickHandler() {
+  _addToWatchListClickHandler(film = this._film) {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign(
             {},
-            this._film,
+            film,
             {
               isInWatchlist: !this._film.isInWatchlist
             }
@@ -119,13 +122,13 @@ export default class FilmPresenter {
     );
   }
 
-  _addToWatchedClickHandler() {
+  _addToWatchedClickHandler(film = this._film) {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign(
             {},
-            this._film,
+            film,
             {
               isWatched: !this._film.isWatched
             }
@@ -133,13 +136,13 @@ export default class FilmPresenter {
     );
   }
 
-  _addToFavoriteClickHandler() {
+  _addToFavoriteClickHandler(film = this._film) {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign(
             {},
-            this._film,
+            film,
             {
               isFavorite: !this._film.isFavorite
             }
@@ -164,11 +167,11 @@ export default class FilmPresenter {
     this._mode = Mode.DEFAULT;
   }
 
-  _deleteClickHandler(film) {
+  _deleteClickHandler(film, commentId) {
     this._changeData(
         UserAction.DELETE_COMMENT,
         UpdateType.MINOR,
-        film);
+        film, commentId);
   }
 
   _addCommentKeyDown(film) {

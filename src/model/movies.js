@@ -83,9 +83,9 @@ export default class Movies extends Observer {
           filmDuration: film.film_info.runtime,
           filmGenre: film.film_info.genre,
           country: film.film_info.release.release_country,
-          isInWatchlist: film.user_details.already_watched,
-          isWatched: film.user_details.favorite,
-          isFavorite: film.user_details.watchlist,
+          isInWatchlist: film.user_details.watchlist,
+          isWatched: film.user_details.already_watched,
+          isFavorite: film.user_details.favorite,
           watchingDate: new Date(film.user_details.watching_date),
         }
     );
@@ -97,8 +97,10 @@ export default class Movies extends Observer {
   }
 
   static adaptToServer(film) {
+    const commentsId = film.comments.map((comment) => comment.id);
     const adaptedFilm = Object.assign({},
         film, {
+          "comments": commentsId,
           "film_info": {
             "title": film.name,
             "alternative_title": film.secondName,
@@ -114,7 +116,7 @@ export default class Movies extends Observer {
             "actors": film.actors,
             "age_rating": film.ageLimit,
             "runtime": film.filmDuration,
-            "genre": film.genre,
+            "genre": film.filmGenre,
           },
           "user_details": {
             "already_watched": film.isWatched,
@@ -124,6 +126,7 @@ export default class Movies extends Observer {
           }
         }
     );
+
     delete adaptedFilm.userEmoji;
     delete adaptedFilm.name;
     delete adaptedFilm.secondName;
@@ -143,24 +146,38 @@ export default class Movies extends Observer {
     delete adaptedFilm.isWatched;
     delete adaptedFilm.isFavorite;
     delete adaptedFilm.watchingDate;
-
     return adaptedFilm;
   }
 
-  static adaptCommentsToClient(comments) {
-    const adaptedComments = [...comments].map((comment) =>{
-      const newCommentObject = Object.assign({}, comment, {
-        name: comment.author,
-        text: comment.comment,
-        date: new Date(comment.date),
-        emoji: comment.emotion
-      });
-
-      delete newCommentObject.author;
-      delete newCommentObject.comment;
-      delete newCommentObject.emotion;
-      return newCommentObject;
+  static adaptCommentsToClient(comment) {
+    const adaptedComment = Object.assign({}, comment, {
+      name: comment.author,
+      text: comment.comment,
+      date: new Date(comment.date),
+      emoji: comment.emotion
     });
-    return adaptedComments;
+
+    delete adaptedComment.author;
+    delete adaptedComment.comment;
+    delete adaptedComment.emotion;
+
+    return adaptedComment;
+  }
+
+  static adaptCommentToServer(comment) {
+    const adaptedComment = Object.assign({}, comment, {
+      author: comment.name,
+      comment: comment.text,
+      date: comment.date.toISOString(),
+      emotion: comment.emoji,
+    });
+
+    delete adaptedComment.id;
+    delete adaptedComment.img;
+    delete adaptedComment.name;
+    delete adaptedComment.text;
+    delete adaptedComment.emoji;
+
+    return adaptedComment;
   }
 }

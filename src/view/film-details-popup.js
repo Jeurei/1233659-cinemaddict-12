@@ -22,12 +22,11 @@ const createSiteFilmDetailsPopup = (data) => {
 };
 
 export default class FilmPopup extends Smart {
-  constructor(data, updateCard) {
+  constructor(data) {
     super();
     this._data = data;
     this._input = null;
     this._userText = null;
-    this._updateCard = updateCard;
     this._createComment = this._createComment.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._keyDownHandler = this._keyDownHandler.bind(this);
@@ -53,7 +52,8 @@ export default class FilmPopup extends Smart {
     this.getElement().querySelector(`#favorite`).addEventListener(`change`, this._addToFavoriteClickHandler);
     this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton, index) => deleteButton.addEventListener(`click`, (evt) =>{
       evt.preventDefault();
-      return this._deleteClickHandler(index);
+      const commentIndex = this._data.comments[index];
+      return this._deleteClickHandler(commentIndex);
     }));
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._setUserText);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._addCommentKeyDown);
@@ -113,7 +113,7 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isInWatchlist: !this._data.isInWatchlist
     });
-    this._updateCard(this._data);
+    this._callback.addToWatchListClick(this._data);
   }
 
   _addToWatchedClickHandler(evt) {
@@ -121,7 +121,7 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isWatched: !this._data.isWatched
     });
-    this._updateCard(this._data);
+    this._callback.addToWatchedClick(this._data);
   }
 
   _addToFavoriteClickHandler(evt) {
@@ -129,16 +129,34 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isFavorite: !this._data.isFavorite
     });
-    this._updateCard(this._data);
+    this._callback.addToFavoriteClick(this._data);
   }
 
-  _deleteClickHandler(index) {
+  setAddToWatchListClickHandler(callback) {
+    this._callback.addToWatchListClick = callback;
+  }
+
+  setAddToWatchedClickHandler(callback) {
+    this._callback.addToWatchedClick = callback;
+  }
+
+  setAddToFavoriteClickHandler(callback) {
+    this._callback.addToFavoriteClick = callback;
+  }
+
+  _deleteClickHandler(commentId) {
+    const index = this._data.comments.findIndex((comment) => comment.id === commentId.id);
+
+    if (index === -1) {
+      throw new Error(`Can't update unexisting film`);
+    }
+
     this.updateData(
         Object.assign(
             {},
             this._data,
             {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}));
-    this._callback.deleteClick(this._data);
+    this._callback.deleteClick(this._data, commentId);
   }
 
   _createComment(emoji, text) {

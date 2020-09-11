@@ -9,7 +9,7 @@ import FilterPresenter from "./presenter/filter.js";
 import SiteStatistic from './view/site-statistc.js';
 import Api from './api.js';
 
-const AUTHORIZATION = `Basic r34d0nlyr34d0nly`;
+const AUTHORIZATION = `Basic r34d0nlyr34d0nlyywwqr34d0nly`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict/`;
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
@@ -18,7 +18,7 @@ const api = new Api(END_POINT, AUTHORIZATION);
 const moviesModel = new MovieModel();
 const filtersModel = new FilterModel();
 const filterPresenter = new FilterPresenter(siteMainElement, filtersModel, moviesModel);
-const moviePresenter = new MovieList(siteMainElement, moviesModel, filtersModel);
+const moviePresenter = new MovieList(siteMainElement, moviesModel, filtersModel, api);
 
 const handleSiteMenuClick = (menuItem) => {
   if (menuItem === currentMenuMode) {
@@ -47,21 +47,20 @@ filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 moviePresenter.init();
 
-api.getMovies()
-.then((movies) => {
-  movies.map(MovieModel.adaptToClient);
-  movies.forEach((movie) => {
-    api.getComments(movie.id).then((comments) => {
-      movie.comments = MovieModel.adaptCommentsToClient(comments);
-    });
-    //  moviesModel.setMovies(UpdateType.INIT, movies);
-    //  const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
-    //  userProfilePresenter.init();
-    //  render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);
+let films = null;
+
+api.getMovies().then((movies) => {
+  films = movies;
+  return Promise.all(movies.map((movie)=>api.getComments(movie.id)));
+}).then((comments) => {
+  films.forEach((film, index) => {
+    film.comments = comments[index];
   });
+  moviesModel.setMovies(UpdateType.INIT, films);
+  const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
+  userProfilePresenter.init();
+  render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);
 })
 .catch(() => {
   moviesModel.setMovies(UpdateType.INIT, []);
 });
-
-
