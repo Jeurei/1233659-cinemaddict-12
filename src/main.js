@@ -33,9 +33,8 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATISTICS:
       currentMenuMode = menuItem;
-      siteStatistic = new SiteStatistic(moviesModel.getMovies());
+      siteStatistic = new SiteStatistic(moviesModel.getMovies(), siteMainElement);
       moviePresenter.destroy();
-      render(siteMainElement, siteStatistic, RenderPosition.BEFOREEND);
       break;
   }
 };
