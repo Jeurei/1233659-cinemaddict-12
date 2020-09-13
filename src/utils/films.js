@@ -64,3 +64,20 @@ export const sortFilmsByRating = (filmA, filmB) => {
 export const sortFilmsByComments = (filmA, filmB) =>{
   return filmB.comments.length - filmA.comments.length;
 };
+
+export function getTimeFromMins(mins) {
+  let hours = Math.trunc(mins / 60);
+  let minutes = mins % 60;
+  return hours ? hours + `h ` + minutes + `m` : minutes + `m`;
+}
+
+export function getHoursFromMins(mins) {
+  return Math.trunc(mins / 60);
+}
+
+export function getRemainMins(mins) {
+  return mins % 60;
+}
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+

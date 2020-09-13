@@ -1,23 +1,22 @@
 import AbstractView from './abstract.js';
 import {formatDateComment} from '../utils/films.js';
 import {emojiMap} from '../const.js';
+import he from "he";
 
 const createComments = (comments) => {
-
   if (comments.length === 0) {
     return ``;
   }
-
   let result = [];
 
   for (let i = 0; i < comments.length; i++) {
     let comment =
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-      <img src="${comments[i].img}" width="55" height="55" alt="emoji-${comments[i].emoji}">
+      <img src="${emojiMap[comments[i].emoji]}" width="55" height="55" alt="emoji-${comments[i].emoji}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comments[i].text}</p>
+        <p class="film-details__comment-text">${he.encode(comments[i].text)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].name}</span>
           <span class="film-details__comment-day">${formatDateComment(comments[i].date)}</span>

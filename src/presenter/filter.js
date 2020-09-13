@@ -9,7 +9,7 @@ export default class Filter {
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
     this._currentFilter = null;
-    this._filterComponent = null;
+    this._siteNavComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
@@ -20,31 +20,34 @@ export default class Filter {
 
   init() {
     this._currentFilter = this._filterModel.getFilter();
-
     const filters = this._getFilters();
-    const prevFilterComponent = this._filterComponent;
+    const prevFilterComponent = this._siteNavComponent;
 
-    this._filterComponent = new SiteNav(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._siteNavComponent = new SiteNav(filters, this._currentFilter);
+    this._siteNavComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
+      render(this._filterContainer, this._siteNavComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    replace(this._filterComponent, prevFilterComponent);
+    replace(this._siteNavComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  _restoreHandlers() {
+    this._siteNavComponent.setMenuClickHandler(this._menuClickHandler);
   }
 
   _handleModelEvent() {
     this.init();
+    this._restoreHandlers();
   }
 
   _handleFilterTypeChange(filterType) {
     if (this._currentFilter === filterType) {
       return;
     }
-
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
@@ -55,7 +58,7 @@ export default class Filter {
       {
         type: FilterType.WATCHLIST,
         name: `Watchlist`,
-        count: filter[FilterType.ALL](films).length
+        count: filter[FilterType.WATCHLIST](films).length
       },
       {
         type: FilterType.HISTORY,
@@ -68,5 +71,10 @@ export default class Filter {
         count: filter[FilterType.FAVORITES](films).length
       },
     ];
+  }
+
+  setMenuClickHandler(callback) {
+    this._menuClickHandler = callback;
+    this._siteNavComponent.setMenuClickHandler(callback);
   }
 }
