@@ -6,7 +6,7 @@ import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
 const createSiteFilmDetailsPopup = (data) => {
   const {comments, userEmoji} = data;
-
+  const dataComments = [...comments].map(FilmPopup.parseCommentToData);
   return (
     `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -14,7 +14,7 @@ const createSiteFilmDetailsPopup = (data) => {
           ${new DetailsDescription(data).getTemplate()}
     </div>
     <div class="form-details__bottom-container">
-          ${new DetailsComments(comments, userEmoji).getTemplate()}
+          ${new DetailsComments(dataComments, userEmoji).getTemplate()}
     </div>
   </form>
 </section>`
@@ -186,10 +186,12 @@ export default class FilmPopup extends Smart {
               {},
               this._data,
               {
-                comments: newComments
+                comments: newComments,
+                userEmoji: ``
               }
           )
       );
+      this._userText = null;
       this._callback.addComment(this._data);
     }
 
@@ -197,5 +199,19 @@ export default class FilmPopup extends Smart {
 
   setAddCommentKeyDown(callback) {
     this._callback.addComment = callback;
+  }
+
+  static parseCommentToData(film) {
+    return Object.assign({}, film, {
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false
+    });
+  }
+
+  static parseDataToComment(data) {
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
   }
 }

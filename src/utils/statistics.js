@@ -17,7 +17,11 @@ export const getGenresFrequencies = (films) => {
 };
 
 export const isWasWatchedToday = (date) => {
-  if (moment(date).isSame(moment(new Date()), `d`)) {
+  if (date === null) {
+    return false;
+  }
+
+  if (moment(date).isSame(moment(), `d`)) {
     return true;
   } else {
     return false;

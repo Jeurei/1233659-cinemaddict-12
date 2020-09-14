@@ -9,7 +9,7 @@ import FilterPresenter from "./presenter/filter.js";
 import SiteStatistic from './view/site-statistc.js';
 import Api from './api.js';
 
-const AUTHORIZATION = `Basic r34d0nlyr34d0nlyywwqr34d0nly`;
+const AUTHORIZATION = `Basic r34d0nlyr3ly111`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict/`;
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
@@ -43,7 +43,6 @@ let siteStatistic = null;
 let currentMenuMode = MenuItem.FILTER;
 
 filterPresenter.init();
-filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 moviePresenter.init();
 
 let films = null;
@@ -56,6 +55,8 @@ api.getMovies().then((movies) => {
     film.comments = comments[index];
   });
   moviesModel.setMovies(UpdateType.INIT, films);
+  filterPresenter.turnOnFilters();
+  filterPresenter.setMenuClickHandler(handleSiteMenuClick);
   const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
   userProfilePresenter.init();
   render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);

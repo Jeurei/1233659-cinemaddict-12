@@ -86,10 +86,9 @@ export default class Movies extends Observer {
           isInWatchlist: film.user_details.watchlist,
           isWatched: film.user_details.already_watched,
           isFavorite: film.user_details.favorite,
-          watchingDate: new Date(film.user_details.watching_date),
+          watchingDate: film.user_details.watching_date === null ? null : new Date(film.user_details.watching_date)
         }
     );
-
     delete adaptedFilm.film_info;
     delete adaptedFilm.user_details;
 
@@ -122,7 +121,7 @@ export default class Movies extends Observer {
             "already_watched": film.isWatched,
             "favorite": film.isFavorite,
             "watchlist": film.isInWatchlist,
-            "watching_date": film.watchingDate.toISOString(),
+            "watching_date": film.watchingDate === null ? null : film.watchingDate.toISOString(),
           }
         }
     );

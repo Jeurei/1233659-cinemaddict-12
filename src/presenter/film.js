@@ -130,7 +130,8 @@ export default class FilmPresenter {
             {},
             film,
             {
-              isWatched: !this._film.isWatched
+              isWatched: !this._film.isWatched,
+              watchingDate: this._film.watchingDate === null ? new Date() : null
             }
         )
     );
