@@ -46,7 +46,6 @@ filterPresenter.init();
 moviePresenter.init();
 
 let films = null;
-
 api.getMovies().then((movies) => {
   films = movies;
   return Promise.all(movies.map((movie)=>api.getComments(movie.id)));

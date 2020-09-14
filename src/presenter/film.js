@@ -8,7 +8,6 @@ const Mode = {
   OPENED: `OPENED`
 };
 
-
 export default class FilmPresenter {
   constructor(filmContainer, changeData, changeMode) {
     this._filmContainer = filmContainer;
