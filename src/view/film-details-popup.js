@@ -6,7 +6,6 @@ import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
 const createSiteFilmDetailsPopup = (data) => {
   const {comments, userEmoji} = data;
-  const dataComments = [...comments].map(FilmPopup.parseCommentToData);
   return (
     `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -14,7 +13,7 @@ const createSiteFilmDetailsPopup = (data) => {
           ${new DetailsDescription(data).getTemplate()}
     </div>
     <div class="form-details__bottom-container">
-          ${new DetailsComments(dataComments, userEmoji).getTemplate()}
+          ${new DetailsComments(comments, userEmoji).getTemplate()}
     </div>
   </form>
 </section>`
@@ -25,6 +24,7 @@ export default class FilmPopup extends Smart {
   constructor(data) {
     super();
     this._data = data;
+    this._data.comments = this._data.comments.map(this.parseCommentToData);
     this._input = null;
     this._userText = null;
     this._createComment = this._createComment.bind(this);
@@ -113,7 +113,9 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isInWatchlist: !this._data.isInWatchlist
     });
+    this._data.comments = this._data.comments.map(this.parseDataToComment);
     this._callback.addToWatchListClick(this._data);
+    this._data.comments = this._data.comments.map(this.parseCommentToData);
   }
 
   _addToWatchedClickHandler(evt) {
@@ -121,7 +123,9 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isWatched: !this._data.isWatched
     });
+    this._data.comments = this._data.comments.map(this.parseDataToComment);
     this._callback.addToWatchedClick(this._data);
+    this._data.comments = this._data.comments.map(this.parseCommentToData);
   }
 
   _addToFavoriteClickHandler(evt) {
@@ -129,7 +133,9 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isFavorite: !this._data.isFavorite
     });
+    this._data.comments = this._data.comments.map(this.parseDataToComment);
     this._callback.addToFavoriteClick(this._data);
+    this._data.comments = this._data.comments.map(this.parseCommentToData);
   }
 
   setAddToWatchListClickHandler(callback) {
@@ -156,7 +162,9 @@ export default class FilmPopup extends Smart {
             {},
             this._data,
             {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}));
+    this._data.comments = this._data.comments.map(this.parseDataToComment);
     this._callback.deleteClick(this._data, commentId);
+    this._data.comments = this._data.comments.map(this.parseCommentToData);
   }
 
   _createComment(emoji, text) {
@@ -192,7 +200,9 @@ export default class FilmPopup extends Smart {
           )
       );
       this._userText = null;
+      this._data.comments = this._data.comments.map(this.parseDataToComment);
       this._callback.addComment(this._data);
+      this._data.comments = this._data.comments.map(this.parseCommentToData);
     }
 
   }
@@ -213,5 +223,9 @@ export default class FilmPopup extends Smart {
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
+  }
+
+  setSaving() {
+
   }
 }
