@@ -3,9 +3,16 @@ import FilmPopup from '../view/film-details-popup.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {ESC_CODE} from '../const.js';
 import {UserAction, UpdateType} from "../const.js";
+
 const Mode = {
   DEFAULT: `DEFAULT`,
   OPENED: `OPENED`
+};
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
 };
 
 export default class FilmPresenter {
@@ -16,7 +23,6 @@ export default class FilmPresenter {
     this._filmPopupComponent = null;
     this._changeMode = changeMode;
     this._mode = Mode.DEFAULT;
-    this._updateCard = this._updateCard.bind(this);
     this._addToWatchListClickHandler = this._addToWatchListClickHandler.bind(this);
     this._addToWatchedClickHandler = this._addToWatchedClickHandler.bind(this);
     this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
@@ -25,12 +31,14 @@ export default class FilmPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
+    this._updatePopupComments = this._updatePopupComments.bind(this);
   }
 
   init(film) {
     this._film = film;
     const prevFilmComponent = this._filmComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
+
     this._filmComponent = new Film(film);
     this._filmPopupComponent = new FilmPopup(film);
 
@@ -46,6 +54,7 @@ export default class FilmPresenter {
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
       render(this._filmContainer, this._filmComponent, RenderPosition.BEFOREEND);
+
       return;
     }
 
@@ -69,24 +78,13 @@ export default class FilmPresenter {
     }
   }
 
-  _updateCard(film) {
-    this._film = film;
-    const prevFilmComponent = this._filmComponent;
-    this._filmComponent = new Film(film);
-
-    this._filmComponent.setClickHandler(this._clickHandler);
-    this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
-    this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
-    this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
-
-    replace(this._filmComponent, prevFilmComponent);
-  }
-
   destroy(isPopupOppened) {
     remove(this._filmComponent);
     if (!isPopupOppened) {
       remove(this._filmPopupComponent);
     }
+
+    this._filmPopupComponent.updateData(Object.assign({}, this._filmPopupComponent._data));
   }
 
   _closePopup() {
@@ -179,5 +177,44 @@ export default class FilmPresenter {
         UserAction.ADD_COMMENT,
         UpdateType.MINOR,
         film);
+  }
+
+  setViewState(state, commentId) {
+    const resetFormState = () => {
+      this._filmPopupComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._filmPopupComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._filmPopupComponent.setDeletingCommentId(commentId);
+        this._filmPopupComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        if (this._mode === Mode.OPENED) {
+          this._filmPopupComponent.shake(resetFormState);
+        }
+        break;
+    }
+  }
+
+  _updatePopupComments(comments) {
+    this._filmPopupComponent.updateComments(comments);
+  }
+
+  setSaving() {
+
   }
 }

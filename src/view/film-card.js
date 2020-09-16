@@ -15,7 +15,7 @@ const createSiteFilmCard = (film) => {
     <p class="film-card__info">
       <span class="film-card__year">${formatDateYear(releaseDate)}</span>
       <span class="film-card__duration">${getTimeFromMins(filmDuration)}</span>
-      <span class="film-card__genre">${filmGenre[0]}</span>
+      <span class="film-card__genre">${filmGenre[0] ? filmGenre[0] : ``}</span>
     </p>
     <img src="${img}" alt="${name}" class="film-card__poster">
     <p class="film-card__description">${newDescription}</p>

@@ -1,4 +1,4 @@
-import FilmPresenter from './film.js';
+import FilmPresenter, {State as FilmPresenterStates} from './film.js';
 import SiteSort from '../view/site-sort.js';
 import SiteMainContentContainers from '../view/site-films-containers';
 import SiteFilmsList from '../view/site-films-list';
@@ -88,6 +88,12 @@ export default class MovieList {
     let film = null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
+        for (let presenter of this._filmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._filmPresenter.get(presenter).setSaving();
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, commentId);
+          }
+        }
         this._api.updateFilm(update).then((movie) => {
           film = movie;
           return this._api.getComments(movie.id);
@@ -99,19 +105,45 @@ export default class MovieList {
         break;
       case UserAction.ADD_COMMENT:
         film = update;
+        for (let presenter of this._filmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
+          }
+        }
         this._api.addComment(update, update.comments).then((comments) => {
           film.comments = comments;
           this._moviesModel.addComment(updateType, film);
           for (let presenter of this._filmPresenter.keys()) {
-            if (presenter === film.id) {
-              presenter.init(film);
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter)._updatePopupComments(comments);
+              this._filmPresenter.get(presenter).init(film);
+            }
+          }
+        })
+        .catch(()=>{
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
             }
           }
         });
         break;
       case UserAction.DELETE_COMMENT:
+        film = update;
+        for (let presenter of this._filmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, commentId);
+          }
+        }
         this._api.deleteComment(commentId).then(() => {
           this._moviesModel.deleteComment(updateType, update);
+        })
+        .catch(()=>{
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
+            }
+          }
         });
         break;
     }

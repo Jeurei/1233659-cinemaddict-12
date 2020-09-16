@@ -4,13 +4,8 @@ import Smart from './smart.js';
 import {getRandomName} from '../utils/common.js';
 import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
-export const State = {
-  SAVING: `SAVING`,
-  DELETING: `DELETING`
-};
-
-const createSiteFilmDetailsPopup = (data) => {
-  const {comments, userEmoji} = data;
+const createSiteFilmDetailsPopup = (data, deletingCommentId) => {
+  const {comments, userEmoji, isDisabled, isDeleting, isSaving} = data;
   return (
     `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -18,7 +13,7 @@ const createSiteFilmDetailsPopup = (data) => {
           ${new DetailsDescription(data).getTemplate()}
     </div>
     <div class="form-details__bottom-container">
-          ${new DetailsComments(comments, userEmoji).getTemplate()}
+          ${new DetailsComments(comments, userEmoji, deletingCommentId, isDisabled, isDeleting, isSaving).getTemplate()}
     </div>
   </form>
 </section>`
@@ -28,8 +23,8 @@ const createSiteFilmDetailsPopup = (data) => {
 export default class FilmPopup extends Smart {
   constructor(data) {
     super();
-    this._data = data;
-    this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+    this._data = FilmPopup.parseFilmToData(data);
+    this._deletingCommentId = null;
     this._input = null;
     this._userText = null;
     this._createComment = this._createComment.bind(this);
@@ -39,6 +34,7 @@ export default class FilmPopup extends Smart {
     this._onEmojiClickHandler = this._onEmojiClickHandler.bind(this);
     this._addToWatchedClickHandler = this._addToWatchedClickHandler.bind(this);
     this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
+    this._updateComments = this._updateComments.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
     this._setUserText = this._setUserText.bind(this);
@@ -46,7 +42,7 @@ export default class FilmPopup extends Smart {
   }
 
   getTemplate() {
-    return createSiteFilmDetailsPopup(this._data);
+    return createSiteFilmDetailsPopup(this._data, this._deletingCommentId);
   }
 
   _setInnerHandlers() {
@@ -75,7 +71,6 @@ export default class FilmPopup extends Smart {
   _onEmojiClickHandler(evt) {
     let emoji = evt.currentTarget.getAttribute(`for`).split(`-`)[1];
     this._userEmoji = emoji;
-
     this.updateData({
       userEmoji: emoji
     });
@@ -119,9 +114,9 @@ export default class FilmPopup extends Smart {
       isInWatchlist: !this._data.isInWatchlist
     });
 
-    this._data.comments = this._data.comments.map(FilmPopup.parseDataToComment);
+    this._data = FilmPopup.parseDataToFilm(this._data);
     this._callback.addToWatchListClick(this._data);
-    this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+    this._data = FilmPopup.parseFilmToData(this._data);
   }
 
   _addToWatchedClickHandler(evt) {
@@ -129,9 +124,9 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isWatched: !this._data.isWatched
     });
-    this._data.comments = this._data.comments.map(FilmPopup.parseDataToComment);
+    this._data = FilmPopup.parseDataToFilm(this._data);
     this._callback.addToWatchedClick(this._data);
-    this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+    this._data = FilmPopup.parseFilmToData(this._data);
   }
 
   _addToFavoriteClickHandler(evt) {
@@ -139,9 +134,9 @@ export default class FilmPopup extends Smart {
     this.updateData({
       isFavorite: !this._data.isFavorite
     });
-    this._data.comments = this._data.comments.map(FilmPopup.parseDataToComment);
+    this._data = FilmPopup.parseDataToFilm(this._data);
     this._callback.addToFavoriteClick(this._data);
-    this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+    this._data = FilmPopup.parseFilmToData(this._data);
   }
 
   setAddToWatchListClickHandler(callback) {
@@ -168,9 +163,10 @@ export default class FilmPopup extends Smart {
             {},
             this._data,
             {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}));
-    this._data.comments = this._data.comments.map(FilmPopup.parseDataToComment);
+
+    this._data = FilmPopup.parseDataToFilm(this._data);
     this._callback.deleteClick(this._data, commentId);
-    this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+    this._data = FilmPopup.parseFilmToData(this._data);
   }
 
   _createComment(emoji, text) {
@@ -180,7 +176,6 @@ export default class FilmPopup extends Smart {
       date: new Date(),
       emoji,
       img: emojiMap[emoji],
-      id: this._data.comments.length + 1
     };
   }
 
@@ -206,9 +201,9 @@ export default class FilmPopup extends Smart {
           )
       );
       this._userText = null;
-      this._data.comments = this._data.comments.map(FilmPopup.parseDataToComment);
+      this._data = FilmPopup.parseDataToFilm(this._data);
       this._callback.addComment(this._data);
-      this._data.comments = this._data.comments.map(FilmPopup.parseCommentToData);
+      this._data = FilmPopup.parseFilmToData(this._data);
     }
 
   }
@@ -217,15 +212,15 @@ export default class FilmPopup extends Smart {
     this._callback.addComment = callback;
   }
 
-  static parseCommentToData(comment) {
-    return Object.assign({}, comment, {
+  static parseFilmToData(film) {
+    return Object.assign({}, film, {
       isDisabled: false,
       isSaving: false,
       isDeleting: false
     });
   }
 
-  static parseDataToComment(data) {
+  static parseDataToFilm(data) {
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
@@ -233,36 +228,24 @@ export default class FilmPopup extends Smart {
     return data;
   }
 
-  _setSaving() {
-    this.updateData(Object.assign(
-        {},
-        this._data,
-        {
-          isSaving: true,
-          isDisabled: true
-        }
-    ));
+  setDeletingCommentId(commentId) {
+    this._deletingCommentId = commentId;
   }
 
-  _setDeleting() {
-    this.updateData(Object.assign(
-        {},
-        this._data,
-        {
-          isSaving: true,
-          isDisabled: true
-        }
-    ));
+
+  setAborting() {
+    const resetFormState = () => {
+      this._filmPopupComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._filmPopupComponent.shake(resetFormState);
   }
 
-  setViewState(state) {
-    switch (state) {
-      case State.SAVING :
-        this._setSaving();
-        break;
-      case State.DELETING :
-        this._setDeleting();
-        break;
-    }
+  _updateComments(comments) {
+    this._data.comments = comments;
   }
 }
