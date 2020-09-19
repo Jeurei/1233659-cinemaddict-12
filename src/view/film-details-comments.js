@@ -3,7 +3,7 @@ import {formatDateComment} from '../utils/films.js';
 import {emojiMap} from '../const.js';
 import he from "he";
 
-const createComments = (comments, deletingCommentId, isDisabled, isDeleting) => {
+const createComments = (comments, deletingComment, isDisabled, isDeleting) => {
 
   if (comments.length === 0) {
     return ``;
@@ -22,7 +22,7 @@ const createComments = (comments, deletingCommentId, isDisabled, isDeleting) => 
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].name}</span>
           <span class="film-details__comment-day">${formatDateComment(comments[i].date)}</span>
-          <button class="film-details__comment-delete" ${isDisabled || isDeleting ? `disabled` : ``}>${isDeleting && comments[i] === deletingCommentId ? `deleting...` : `delete`}</button>
+          <button class="film-details__comment-delete" ${isDisabled || isDeleting ? `disabled` : ``}>${isDeleting && comments[i].id === deletingComment.id ? `deleting...` : `delete`}</button>
         </p>
       </div>
     </li>`;
@@ -80,17 +80,17 @@ const createFilmDetailsComments = (comments, userEmoji, deletingCommentId, isDis
 };
 
 export default class DetailsComments extends AbstractView {
-  constructor(comments, userEmoji, deletingCommentId, isDisabled, isDeleting, isSaving) {
+  constructor(comments, userEmoji, deletingComment, isDisabled, isDeleting, isSaving) {
     super();
     this._comments = comments;
     this._userEmoji = userEmoji;
-    this._deletingCommentId = deletingCommentId;
+    this._deletingComment = deletingComment;
     this._isDisabled = isDisabled;
     this._isDeleting = isDeleting;
     this._isSaving = isSaving;
   }
 
   getTemplate() {
-    return createFilmDetailsComments(this._comments, this._userEmoji, this._deletingCommentId, this._isDisabled, this._isDeleting, this._isSaving);
+    return createFilmDetailsComments(this._comments, this._userEmoji, this._deletingComment, this._isDisabled, this._isDeleting, this._isSaving);
   }
 }

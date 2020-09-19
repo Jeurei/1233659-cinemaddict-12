@@ -1,7 +1,6 @@
 import DetailsDescription from './film-details-description.js';
 import DetailsComments from './film-details-comments.js';
 import Smart from './smart.js';
-import {getRandomName} from '../utils/common.js';
 import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
 const createSiteFilmDetailsPopup = (data, deletingCommentId) => {
@@ -24,7 +23,7 @@ export default class FilmPopup extends Smart {
   constructor(data) {
     super();
     this._data = FilmPopup.parseFilmToData(data);
-    this._deletingCommentId = null;
+    this._deletingComment = null;
     this._input = null;
     this._userText = null;
     this._createComment = this._createComment.bind(this);
@@ -34,7 +33,6 @@ export default class FilmPopup extends Smart {
     this._onEmojiClickHandler = this._onEmojiClickHandler.bind(this);
     this._addToWatchedClickHandler = this._addToWatchedClickHandler.bind(this);
     this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
-    this._updateComments = this._updateComments.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
     this._setUserText = this._setUserText.bind(this);
@@ -42,7 +40,7 @@ export default class FilmPopup extends Smart {
   }
 
   getTemplate() {
-    return createSiteFilmDetailsPopup(this._data, this._deletingCommentId);
+    return createSiteFilmDetailsPopup(this._data, this._deletingComment);
   }
 
   _setInnerHandlers() {
@@ -110,33 +108,38 @@ export default class FilmPopup extends Smart {
 
   _addToWatchListClickHandler(evt) {
     evt.preventDefault();
-    this.updateData({
+    const newData = Object.assign({}, this._data, {
       isInWatchlist: !this._data.isInWatchlist
     });
-
-    this._data = FilmPopup.parseDataToFilm(this._data);
-    this._callback.addToWatchListClick(this._data);
-    this._data = FilmPopup.parseFilmToData(this._data);
+    this._data = FilmPopup.parseDataToFilm(newData);
+    this._callback.addToWatchListClick(newData).then(() => {
+      this._data = FilmPopup.parseFilmToData(newData);
+      this.updateData(newData);
+    });
   }
 
   _addToWatchedClickHandler(evt) {
     evt.preventDefault();
-    this.updateData({
+    const newData = Object.assign({}, this._data, {
       isWatched: !this._data.isWatched
     });
-    this._data = FilmPopup.parseDataToFilm(this._data);
-    this._callback.addToWatchedClick(this._data);
-    this._data = FilmPopup.parseFilmToData(this._data);
+    this._data = FilmPopup.parseDataToFilm(newData);
+    this._callback.addToWatchedClick(newData).then(() => {
+      this._data = FilmPopup.parseFilmToData(newData);
+      this.updateData(newData);
+    });
   }
 
   _addToFavoriteClickHandler(evt) {
     evt.preventDefault();
-    this.updateData({
+    const newData = Object.assign({}, this._data, {
       isFavorite: !this._data.isFavorite
     });
-    this._data = FilmPopup.parseDataToFilm(this._data);
-    this._callback.addToFavoriteClick(this._data);
-    this._data = FilmPopup.parseFilmToData(this._data);
+    this._data = FilmPopup.parseDataToFilm(newData);
+    this._callback.addToFavoriteClick(newData).then(() => {
+      this._data = FilmPopup.parseFilmToData(newData);
+      this.updateData(newData);
+    });
   }
 
   setAddToWatchListClickHandler(callback) {
@@ -151,27 +154,25 @@ export default class FilmPopup extends Smart {
     this._callback.addToFavoriteClick = callback;
   }
 
-  _deleteClickHandler(commentId) {
-    const index = this._data.comments.findIndex((comment) => comment.id === commentId.id);
+  _deleteClickHandler(targetComment) {
+    const index = this._data.comments.findIndex((comment) => comment.id === targetComment.id);
 
     if (index === -1) {
       throw new Error(`Can't update unexisting film`);
     }
 
-    this.updateData(
-        Object.assign(
-            {},
-            this._data,
-            {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}));
+    const newData = Object.assign(
+        {},
+        this._data,
+        {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]});
 
-    this._data = FilmPopup.parseDataToFilm(this._data);
-    this._callback.deleteClick(this._data, commentId);
-    this._data = FilmPopup.parseFilmToData(this._data);
+    this._callback.deleteClick(FilmPopup.parseDataToFilm(newData), targetComment).then(()=>{
+      this.updateData(Object.assign({}, newData));
+    });
   }
 
   _createComment(emoji, text) {
     return {
-      name: getRandomName(),
       text,
       date: new Date(),
       emoji,
@@ -190,20 +191,27 @@ export default class FilmPopup extends Smart {
   _addCommentKeyDown(evt) {
     if ((evt.ctrlKey && evt.key === ENTER_CODE) && this._userEmoji && this._userText) {
       const newComments = [...this._data.comments, this._createComment(this._userEmoji, this._userText)];
-      this.updateData(
-          Object.assign(
-              {},
-              this._data,
-              {
-                comments: newComments,
-                userEmoji: ``
-              }
-          )
-      );
-      this._userText = null;
+      this.updateData(Object.assign({}, this._data, {
+        userEmoji: ``,
+      }));
+      this._data.comments = newComments;
       this._data = FilmPopup.parseDataToFilm(this._data);
-      this._callback.addComment(this._data);
-      this._data = FilmPopup.parseFilmToData(this._data);
+      this._callback.addComment(this._data).then((comments) => {
+        this.updateData(
+            Object.assign(
+                {},
+                this._data,
+                {
+                  comments,
+                  userEmoji: ``,
+                  isDisabled: false,
+                  isSaving: false,
+                  isDeleting: false
+                }
+            )
+        );
+        this._userText = null;
+      });
     }
 
   }
@@ -228,8 +236,8 @@ export default class FilmPopup extends Smart {
     return data;
   }
 
-  setDeletingCommentId(commentId) {
-    this._deletingCommentId = commentId;
+  setDeletingCommentId(comment) {
+    this._deletingComment = comment;
   }
 
 
@@ -243,9 +251,5 @@ export default class FilmPopup extends Smart {
     };
 
     this._filmPopupComponent.shake(resetFormState);
-  }
-
-  _updateComments(comments) {
-    this._data.comments = comments;
   }
 }

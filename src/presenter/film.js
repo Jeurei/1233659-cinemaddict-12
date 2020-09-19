@@ -31,14 +31,12 @@ export default class FilmPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
-    this._updatePopupComments = this._updatePopupComments.bind(this);
   }
 
   init(film) {
     this._film = film;
     const prevFilmComponent = this._filmComponent;
     const prevFilmPopupComponent = this._filmPopupComponent;
-
     this._filmComponent = new Film(film);
     this._filmPopupComponent = new FilmPopup(film);
 
@@ -78,13 +76,11 @@ export default class FilmPresenter {
     }
   }
 
-  destroy(isPopupOppened) {
+  destroy(isPopupOpenned = false) {
     remove(this._filmComponent);
-    if (!isPopupOppened) {
+    if (!isPopupOpenned) {
       remove(this._filmPopupComponent);
     }
-
-    this._filmPopupComponent.updateData(Object.assign({}, this._filmPopupComponent._data));
   }
 
   _closePopup() {
@@ -165,15 +161,15 @@ export default class FilmPresenter {
     this._mode = Mode.DEFAULT;
   }
 
-  _deleteClickHandler(film, commentId) {
-    this._changeData(
+  _deleteClickHandler(film, targetComment) {
+    return this._changeData(
         UserAction.DELETE_COMMENT,
         UpdateType.MINOR,
-        film, commentId);
+        film, targetComment);
   }
 
   _addCommentKeyDown(film) {
-    this._changeData(
+    return this._changeData(
         UserAction.ADD_COMMENT,
         UpdateType.MINOR,
         film);
@@ -193,7 +189,7 @@ export default class FilmPresenter {
         this._filmPopupComponent.updateData({
           isDisabled: true,
           isSaving: true
-        });
+        }, true);
         break;
       case State.DELETING:
         this._filmPopupComponent.setDeletingCommentId(commentId);
@@ -208,13 +204,5 @@ export default class FilmPresenter {
         }
         break;
     }
-  }
-
-  _updatePopupComments(comments) {
-    this._filmPopupComponent.updateComments(comments);
-  }
-
-  setSaving() {
-
   }
 }

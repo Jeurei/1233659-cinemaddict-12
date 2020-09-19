@@ -19,10 +19,11 @@ export default class Smart extends AbstractView {
     this.restoreHandlers();
   }
 
-  updateData(update) {
+  updateData(update, onlyUpdateData = false) {
     if (!update) {
       return;
     }
+
     this._setScrollPosition();
     this._data = Object.assign(
         {},
@@ -30,9 +31,10 @@ export default class Smart extends AbstractView {
         update
     );
 
-
-    this.updateElement();
-    this._restoreScrollPosition();
+    if (!onlyUpdateData) {
+      this.updateElement();
+      this._restoreScrollPosition();
+    }
   }
 
   _setScrollPosition() {

@@ -84,16 +84,10 @@ export default class MovieList {
     return filtredFilms;
   }
 
-  _handleViewAction(actionType, updateType, update, commentId) {
+  _handleViewAction(actionType, updateType, update, targetComment) {
     let film = null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        for (let presenter of this._filmPresenter.keys()) {
-          if (presenter[0] === film.id) {
-            this._filmPresenter.get(presenter).setSaving();
-            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, commentId);
-          }
-        }
         this._api.updateFilm(update).then((movie) => {
           film = movie;
           return this._api.getComments(movie.id);
@@ -110,15 +104,14 @@ export default class MovieList {
             this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
           }
         }
-        this._api.addComment(update, update.comments).then((comments) => {
-          film.comments = comments;
+        const commentsPromise = this._api.addComment(update, update.comments).then((comments) => {
           this._moviesModel.addComment(updateType, film);
           for (let presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
-              this._filmPresenter.get(presenter)._updatePopupComments(comments);
               this._filmPresenter.get(presenter).init(film);
             }
           }
+          return Promise.resolve(comments);
         })
         .catch(()=>{
           for (let presenter of this._filmPresenter.keys()) {
@@ -127,16 +120,22 @@ export default class MovieList {
             }
           }
         });
-        break;
+        return commentsPromise;
       case UserAction.DELETE_COMMENT:
         film = update;
         for (let presenter of this._filmPresenter.keys()) {
           if (presenter[0] === film.id) {
-            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, commentId);
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, targetComment);
           }
         }
-        this._api.deleteComment(commentId).then(() => {
+        const promiseOfDeleting = this._api.deleteComment(targetComment).then(() => {
           this._moviesModel.deleteComment(updateType, update);
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve();
         })
         .catch(()=>{
           for (let presenter of this._filmPresenter.keys()) {
@@ -145,8 +144,9 @@ export default class MovieList {
             }
           }
         });
-        break;
+        return promiseOfDeleting;
     }
+    return null;
   }
 
   _handleModelEvent(updateType, updatedFilm) {
@@ -290,7 +290,7 @@ export default class MovieList {
     this._renderMovies();
   }
 
-  _clearMovieList({isPopupOppened = false, resetSortType = false, resetRenderedFilms = false} = {}) {
+  _clearMovieList({resetSortType = false, resetRenderedFilms = false, isPopupOppened = false} = {}) {
     const filmsCount = this._moviesModel.getMovies().length;
 
     for (let presenter of this._filmPresenter.values()) {
