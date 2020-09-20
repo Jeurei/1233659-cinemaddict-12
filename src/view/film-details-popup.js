@@ -167,7 +167,10 @@ export default class FilmPopup extends Smart {
         {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]});
 
     this._callback.deleteClick(FilmPopup.parseDataToFilm(newData), targetComment).then(()=>{
-      this.updateData(Object.assign({}, newData));
+      this.updateData(Object.assign({}, newData, {
+        isDisabled: false,
+        isDeleting: false,
+      }));
     });
   }
 
