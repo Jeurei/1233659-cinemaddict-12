@@ -175,7 +175,7 @@ export default class FilmPresenter {
         film);
   }
 
-  setViewState(state, commentId) {
+  setViewState(state, comment) {
     const resetFormState = () => {
       this._filmPopupComponent.updateData({
         isDisabled: false,
@@ -192,7 +192,7 @@ export default class FilmPresenter {
         }, true);
         break;
       case State.DELETING:
-        this._filmPopupComponent.setDeletingCommentId(commentId);
+        this._filmPopupComponent.setDeletingComment(comment);
         this._filmPopupComponent.updateData({
           isDisabled: true,
           isDeleting: true

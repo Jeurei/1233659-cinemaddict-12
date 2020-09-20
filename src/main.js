@@ -7,7 +7,7 @@ import MovieModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from "./presenter/filter.js";
 import SiteStatistic from './view/site-statistc.js';
-import Api from './api.js';
+import Api from './api/index.js';
 
 const AUTHORIZATION = `Basic r34d0naassdlyr3ly1111`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict/`;
@@ -46,6 +46,7 @@ filterPresenter.init();
 moviePresenter.init();
 
 let films = null;
+
 api.getMovies().then((movies) => {
   films = movies;
   return Promise.all(movies.map((movie)=>api.getComments(movie.id)));
@@ -62,4 +63,14 @@ api.getMovies().then((movies) => {
 })
 .catch(() => {
   moviesModel.setMovies(UpdateType.INIT, []);
+});
+
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      console.log(`ServiceWorker available`); // eslint-disable-line
+    }).catch(() => {
+      console.error(`ServiceWorker isn't available`); // eslint-disable-line
+    });
 });

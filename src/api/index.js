@@ -1,4 +1,4 @@
-import MovieModel from './model/movies.js';
+import MovieModel from '../model/movies.js';
 
 const Method = {
   GET: `GET`,
@@ -106,5 +106,15 @@ export default class Api {
 
   static catchError(err) {
     throw err;
+  }
+
+  sync(data) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 }

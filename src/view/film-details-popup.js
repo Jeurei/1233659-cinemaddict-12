@@ -3,7 +3,7 @@ import DetailsComments from './film-details-comments.js';
 import Smart from './smart.js';
 import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
-const createSiteFilmDetailsPopup = (data, deletingCommentId) => {
+const createSiteFilmDetailsPopup = (data, deletingComment) => {
   const {comments, userEmoji, isDisabled, isDeleting, isSaving} = data;
   return (
     `<section class="film-details">
@@ -12,7 +12,7 @@ const createSiteFilmDetailsPopup = (data, deletingCommentId) => {
           ${new DetailsDescription(data).getTemplate()}
     </div>
     <div class="form-details__bottom-container">
-          ${new DetailsComments(comments, userEmoji, deletingCommentId, isDisabled, isDeleting, isSaving).getTemplate()}
+          ${new DetailsComments(comments, userEmoji, deletingComment, isDisabled, isDeleting, isSaving).getTemplate()}
     </div>
   </form>
 </section>`
@@ -108,26 +108,28 @@ export default class FilmPopup extends Smart {
 
   _addToWatchListClickHandler(evt) {
     evt.preventDefault();
+
     const newData = Object.assign({}, this._data, {
       isInWatchlist: !this._data.isInWatchlist
     });
+
     this._data = FilmPopup.parseDataToFilm(newData);
-    this._callback.addToWatchListClick(newData).then(() => {
-      this._data = FilmPopup.parseFilmToData(newData);
-      this.updateData(newData);
-    });
+    this._callback.addToWatchListClick(newData);
+    this._data = FilmPopup.parseFilmToData(newData);
+    this.updateData(newData);
   }
 
   _addToWatchedClickHandler(evt) {
     evt.preventDefault();
+
     const newData = Object.assign({}, this._data, {
       isWatched: !this._data.isWatched
     });
+
     this._data = FilmPopup.parseDataToFilm(newData);
-    this._callback.addToWatchedClick(newData).then(() => {
-      this._data = FilmPopup.parseFilmToData(newData);
-      this.updateData(newData);
-    });
+    this._callback.addToWatchedClick(newData);
+    this._data = FilmPopup.parseFilmToData(newData);
+    this.updateData(newData);
   }
 
   _addToFavoriteClickHandler(evt) {
@@ -135,11 +137,11 @@ export default class FilmPopup extends Smart {
     const newData = Object.assign({}, this._data, {
       isFavorite: !this._data.isFavorite
     });
+
     this._data = FilmPopup.parseDataToFilm(newData);
-    this._callback.addToFavoriteClick(newData).then(() => {
-      this._data = FilmPopup.parseFilmToData(newData);
-      this.updateData(newData);
-    });
+    this._callback.addToFavoriteClick(newData);
+    this._data = FilmPopup.parseFilmToData(newData);
+    this.updateData(newData);
   }
 
   setAddToWatchListClickHandler(callback) {
@@ -239,7 +241,7 @@ export default class FilmPopup extends Smart {
     return data;
   }
 
-  setDeletingCommentId(comment) {
+  setDeletingComment(comment) {
     this._deletingComment = comment;
   }
 
