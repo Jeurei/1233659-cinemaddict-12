@@ -63,14 +63,14 @@ export default class Provider {
       .then((updatedComments) => {
         film.comments = updatedComments;
         this._store.setItem(film.id, MovieModel.adaptToServer(Object.assign({}, film)));
-        return film;
+        return film.comments;
       });
     }
     comments[comments.length - 1].id = nanoid();
     film.comments = comments;
     this._store.setItem(film.id, MovieModel.adaptToServer(Object.assign({}, film)));
 
-    return Promise.resolve(film);
+    return Promise.resolve(film.comments);
   }
 
   deleteComment(comment) {
