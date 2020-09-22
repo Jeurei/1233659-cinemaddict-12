@@ -11,7 +11,7 @@ import Api from './api/index.js';
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
-const AUTHORIZATION = `Basic r34d0naassdlyr3ly1111`;
+const AUTHORIZATION = `Basic r34d0naaassdlyr3ly1111`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict/`;
 const STORE_PREFIX = `cinemaadict-localstorage`;
 const STORE_VER = `v12`;

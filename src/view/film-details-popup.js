@@ -202,7 +202,6 @@ export default class FilmPopup extends Smart {
       this._data.comments = newComments;
       this._data = FilmPopup.parseDataToFilm(this._data);
       this._callback.addComment(this._data).then((comments) => {
-        console.log(comments);
         this.updateData(
             Object.assign(
                 {},

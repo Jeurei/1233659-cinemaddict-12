@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {formatDateReleaseDate} from '../utils/films.js';
+import {formatDateReleaseDate, getTimeFromMins} from '../utils/films.js';
 
 
 const createGenresSpans = (genres) => {
@@ -50,7 +50,7 @@ const createFilmDetailsDescription = (data) => {
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Runtime</td>
-        <td class="film-details__cell">${filmDuration}</td>
+        <td class="film-details__cell">${getTimeFromMins(filmDuration)}</td>
       </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Country</td>

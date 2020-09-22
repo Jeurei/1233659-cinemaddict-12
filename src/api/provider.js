@@ -29,10 +29,14 @@ export default class Provider {
         return Promise.all(movies.map((movie)=>this._api.getComments(movie.id)));
       })
       .then((comments) => {
+
         films.forEach((film, index) => {
           film.comments = comments[index];
         });
         const items = createStoreStructure(films.map(MovieModel.adaptToServer));
+        Object.values(items).forEach((item, index) => {
+          item.comments = comments[index];
+        });
         this._store.setItems(items);
         return films;
       });
@@ -77,13 +81,14 @@ export default class Provider {
     if (Provider.isOnline()) {
       return this._api.deleteComment(comment)
         .then(() => {
-          Object.value(this._store.getItems()).forEach((value) => {
+          Object.values(this._store.getItems()).forEach((value) => {
             value[`comments`].forEach((localComment, index) => {
               if (localComment.id === comment.id) {
                 value[`comments`] = [...value[`comments`].slice(0, index), value[`comments`].slice(index + 1)];
               }
             });
           });
+          return Promise.resolve();
         });
     }
 
