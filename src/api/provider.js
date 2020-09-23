@@ -3,7 +3,7 @@ import MovieModel from "../model/movies.js";
 
 const getSyncedMovies = (items) => {
   return items.filter(({success}) => success)
-  .map(({playload}) => playload.film);
+  .map(({playload}) => playload.movie);
 };
 
 const createStoreStructure = (items) => {
@@ -66,7 +66,7 @@ export default class Provider {
       return this._api.addComment(film, comments)
       .then((updatedComments) => {
         film.comments = updatedComments;
-        this._store.setItem(film.id, MovieModel.adaptToServer(Object.assign({}, film)));
+        this._store.setItem(film.id, Object.assign({}, MovieModel.adaptToServer(film), {comments: updatedComments}));
         return film.comments;
       });
     }
@@ -81,10 +81,13 @@ export default class Provider {
     if (Provider.isOnline()) {
       return this._api.deleteComment(comment)
         .then(() => {
-          Object.values(this._store.getItems()).forEach((value) => {
+          Object.values(this._store.getItems()).forEach((value, valueIndex) => {
             value[`comments`].forEach((localComment, index) => {
               if (localComment.id === comment.id) {
-                value[`comments`] = [...value[`comments`].slice(0, index), value[`comments`].slice(index + 1)];
+                value[`comments`] = [...value[`comments`].slice(0, index), ...value[`comments`].slice(index + 1)];
+                const newValue = Object.assign({}, value);
+                this._store.removeItem(valueIndex);
+                this._store.setItem(valueIndex, newValue);
               }
             });
           });
@@ -93,10 +96,13 @@ export default class Provider {
         });
     }
 
-    Object.values(this._store.getItems()).forEach((value) => {
+    Object.values(this._store.getItems()).forEach((value, valueIndex) => {
       value[`comments`].forEach((localComment, index) => {
         if (localComment.id === comment.id) {
-          value[`comments`] = [...value[`comments`].slice(0, index), value[`comments`].slice(index + 1)];
+          value[`comments`] = [...value[`comments`].slice(0, index), ...value[`comments`].slice(index + 1)];
+          const newValue = Object.assign({}, value);
+          this._store.removeItem(valueIndex);
+          this._store.setItem(valueIndex, newValue);
         }
       });
     });
@@ -107,10 +113,10 @@ export default class Provider {
   sync() {
     if (Provider.isOnline()) {
       const storeFilms = Object.values(this._store.getItems());
+
       return this._api.sync(storeFilms)
       .then((response) =>{
         const updatedFilms = getSyncedMovies(response.updated);
-
         const items = createStoreStructure([...updatedFilms]);
 
         this._store.setItems(items);
