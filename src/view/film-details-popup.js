@@ -255,7 +255,7 @@ export default class FilmPopup extends Smart {
   setAborting() {
     const resetFormState = () => {
       this.updateData({
-        isDisabled: true,
+        isDisabled: false,
         isSaving: false,
         isDeleting: false
       });

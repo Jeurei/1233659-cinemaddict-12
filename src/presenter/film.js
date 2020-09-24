@@ -178,7 +178,7 @@ export default class FilmPresenter {
   setViewState(state, comment) {
     const resetFormState = () => {
       this._filmPopupComponent.updateData({
-        isDisabled: true,
+        isDisabled: false,
         isSaving: false,
         isDeleting: false
       });

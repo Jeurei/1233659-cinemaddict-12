@@ -77,9 +77,11 @@ window.addEventListener(`load`, () => {
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
+  moviePresenter.setConnectionModeOnline();
   apiWithProvider.sync();
 });
 
 window.addEventListener(`offline`, () => {
   document.title += ` [offline]`;
+  moviePresenter.setConnectionModeOffline();
 });

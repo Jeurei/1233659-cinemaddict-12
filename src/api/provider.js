@@ -116,7 +116,7 @@ export default class Provider {
 
         films.forEach((film) => this._store.removeItem(film.id));
         this._store.setItems(items);
-      })
+      });
     }
 
     return Promise.reject(new Error(`Sync data failed`));

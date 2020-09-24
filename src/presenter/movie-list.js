@@ -358,4 +358,16 @@ export default class MovieList {
       }, this);
     }
   }
+
+  setConnectionModeOnline() {
+    for (let presenter of this._filmPresenter.keys()) {
+      this._filmPresenter.get(presenter).turnOnInputs();
+    }
+  }
+
+  setConnectionModeOffline() {
+    for (let presenter of this._filmPresenter.keys()) {
+      this._filmPresenter.get(presenter).turnOffInputs();
+    }
+  }
 }
