@@ -168,12 +168,18 @@ export default class FilmPopup extends Smart {
         this._data,
         {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]});
 
+    this.setDeletingComment(this._data.comments[index]);
+    this.updateData(Object.assign({}, this._data, {
+      isDisabled: true,
+      isDeleting: true,
+    }));
     this._callback.deleteClick(FilmPopup.parseDataToFilm(newData), targetComment).then(()=>{
       this.updateData(Object.assign({}, newData, {
         isDisabled: false,
         isDeleting: false,
       }));
-    });
+    })
+    .catch();
   }
 
   _createComment(emoji, text) {
@@ -248,13 +254,13 @@ export default class FilmPopup extends Smart {
 
   setAborting() {
     const resetFormState = () => {
-      this._filmPopupComponent.updateData({
-        isDisabled: false,
+      this.updateData({
+        isDisabled: true,
         isSaving: false,
         isDeleting: false
       });
     };
 
-    this._filmPopupComponent.shake(resetFormState);
+    this.shake(resetFormState);
   }
 }

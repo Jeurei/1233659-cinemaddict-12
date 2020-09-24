@@ -57,7 +57,7 @@ const createFilmDetailsDescription = (data) => {
         <td class="film-details__cell">${country}</td>
       </tr>
       ${filmGenre.length ? `<tr class="film-details__row">
-      <td class="film-details__term">Genres</td>
+      <td class="film-details__term">${filmGenre.length === 1 ? `Genre` : `Genres`}</td>
       <td class="film-details__cell">
       ${createGenresSpans(filmGenre)}</td>
       </tr>` : ``}

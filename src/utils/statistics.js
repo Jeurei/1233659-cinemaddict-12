@@ -21,42 +21,26 @@ export const isWasWatchedToday = (date) => {
     return false;
   }
 
-  if (moment(date).isSame(moment(), `d`)) {
-    return true;
-  } else {
-    return false;
-  }
+  return moment(date).isSame(moment(), `d`);
 };
 
 export const isWasWatchedLastWeek = (date) => {
   const todayDate = moment(new Date());
   const lastWeekDate = moment(todayDate).subtract(1, `w`);
 
-  if (moment(date).isBetween(lastWeekDate, todayDate)) {
-    return true;
-  } else {
-    return false;
-  }
+  return moment(date).isBetween(lastWeekDate, todayDate);
 };
 
 export const isWasWatchedLastMounth = (date) => {
   const todayDate = moment(new Date());
   const lastMounthDate = moment(todayDate).subtract(1, `M`);
 
-  if (moment(date).isBetween(lastMounthDate, todayDate)) {
-    return true;
-  } else {
-    return false;
-  }
+  return moment(date).isBetween(lastMounthDate, todayDate);
 };
 
 export const isWasWatchedLastYear = (date) => {
   const todayDate = moment(new Date());
   const lastYearDate = moment(todayDate).subtract(1, `y`);
 
-  if (moment(date).isBetween(lastYearDate, todayDate)) {
-    return true;
-  } else {
-    return false;
-  }
+  return moment(date).isBetween(lastYearDate, todayDate);
 };

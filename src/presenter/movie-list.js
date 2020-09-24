@@ -43,6 +43,7 @@ export default class MovieList {
   init() {
     this._filmContainer = new SiteMainContentContainers();
     this._siteDefaultFilmsList = new SiteFilmsList(DEFAULT_FILM_LIST_CLASS);
+
     this._siteExtraFilmsLists = new Array(QUANTITY_OF_EXTRA_FILMS_LISTS).fill().map(() => new SiteFilmsList(EXTRA_FILMS_LIST_CLASS));
 
     render(this._movieListContainer, this._filmContainer, RenderPosition.BEFOREEND);
@@ -89,12 +90,7 @@ export default class MovieList {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this._api.updateFilm(update).then((movie) => {
-          film = movie;
-          return this._api.getComments(movie.id);
-        })
-        .then((comments) => {
-          film.comments = comments;
-          this._moviesModel.updateFilms(updateType, film);
+          this._moviesModel.updateFilms(updateType, movie);
         });
         break;
       case UserAction.ADD_COMMENT:
@@ -104,7 +100,7 @@ export default class MovieList {
             this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
           }
         }
-        const commentsPromise = this._api.addComment(update, update.comments).then((comments) => {
+        return this._api.addComment(update, update.comments).then((comments) => {
           this._moviesModel.addComment(updateType, film);
           for (let presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
@@ -120,7 +116,6 @@ export default class MovieList {
             }
           }
         });
-        return commentsPromise;
       case UserAction.DELETE_COMMENT:
         film = update;
         for (let presenter of this._filmPresenter.keys()) {
@@ -128,7 +123,7 @@ export default class MovieList {
             this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, targetComment);
           }
         }
-        const promiseOfDeleting = this._api.deleteComment(targetComment).then(() => {
+        return this._api.deleteComment(targetComment).then(() => {
           this._moviesModel.deleteComment(updateType, update);
           for (let presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
@@ -143,8 +138,9 @@ export default class MovieList {
               this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
             }
           }
+
+          return Promise.reject(new Error(`Internet connection lost`));
         });
-        return promiseOfDeleting;
     }
     return null;
   }
@@ -238,6 +234,14 @@ export default class MovieList {
   _renderExtraFilmsContainers() {
     const newExtraFilmsLists = [];
 
+    if (this._moviesModel.getMovies().filter((film) => film.comments.length === 0).length === this._moviesModel.getMovies) {
+      this._siteExtraFilmsLists = this._siteExtraFilmsLists.length - 1;
+    } else {
+      if (this._siteExtraFilmsLists < QUANTITY_OF_EXTRA_FILMS_LISTS) {
+        this._siteExtraFilmsLists.length = this._siteExtraFilmsLists.length + 1;
+      }
+    }
+
     this._siteExtraFilmsLists.forEach((element, i) => {
 
       render(element, new FilmListTitle(EXTRA_FILMS_LIST_TITLES[i]), RenderPosition.BEFOREEND);
@@ -286,7 +290,7 @@ export default class MovieList {
     }
 
     this._currentSortType = sortType;
-    this._clearMovieList();
+    this._clearMovieList({resetRenderedFilms: true});
     this._renderMovies();
   }
 

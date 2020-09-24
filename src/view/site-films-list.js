@@ -1,3 +1,4 @@
+import {remove} from '../utils/render.js';
 import AbstractView from './abstract.js';
 
 const createSiteFilmsList = (className) => {
@@ -16,5 +17,9 @@ export default class SiteFilmsList extends AbstractView {
 
   getTemplate() {
     return createSiteFilmsList(this._className);
+  }
+
+  destroy() {
+    remove(this);
   }
 }
