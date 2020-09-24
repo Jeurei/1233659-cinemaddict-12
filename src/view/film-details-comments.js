@@ -8,7 +8,7 @@ const createComments = (comments, deletingComment, isDisabled, isDeleting) => {
     return ``;
   }
 
-  let result = [];
+  let results = [];
 
   for (let i = 0; i < comments.length; i++) {
     let comment =
@@ -25,9 +25,9 @@ const createComments = (comments, deletingComment, isDisabled, isDeleting) => {
         </p>
       </div>
     </li>`;
-    result.push(comment);
+    results.push(comment);
   }
-  return result.join(``);
+  return results.join(``);
 };
 
 const createUserEmojiTemplate = (userEmoji) => {

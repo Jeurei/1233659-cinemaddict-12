@@ -146,16 +146,16 @@ export default class MovieList {
   }
 
   _handleModelEvent(updateType, updatedFilm) {
-    const arrayOfPresenters = [];
+    const presenters = [];
     for (let presenter of this._filmPresenter.keys()) {
       if (presenter[0] === updatedFilm.id) {
-        arrayOfPresenters.push(presenter);
+        presenters.push(presenter);
       }
     }
 
     switch (updateType) {
       case UpdateType.PATCH:
-        arrayOfPresenters.forEach(function (presenter) {
+        presenters.forEach((presenter) => {
           this._filmPresenter.get(presenter).init(updatedFilm);
         }, this);
         break;
@@ -202,12 +202,12 @@ export default class MovieList {
   }
 
   _handleShowMoreButtonClick() {
-    const filmsCount = this._moviesModel.getMovies().length;
+    const filmsCount = this._getFilms().length;
     const newRenderedFilmsCount = Math.min(filmsCount, this._renderedFilms + QUANTITY_OF_FILM_CARDS_PER_STEP);
-    this._renderFilms(this._moviesModel.getMovies().slice(this._renderedFilms, newRenderedFilmsCount));
+    this._renderFilms(this._getFilms().slice(this._renderedFilms, newRenderedFilmsCount));
     this._renderedFilms = newRenderedFilmsCount;
 
-    if (this._renderedFilms >= this._moviesModel.getMovies().length) {
+    if (this._renderedFilms >= this._getFilms().length) {
       this._showMoreButton.getElement().remove();
     }
   }
@@ -263,7 +263,7 @@ export default class MovieList {
 
   _renderFilmList() {
     const films = this._getFilms();
-    for (let i = 0; i < Math.min(this._getFilms().length, this._renderedFilms); i++) {
+    for (let i = 0; i < Math.min(films.length, this._renderedFilms); i++) {
       this._renderFilmCard(this._filmsContainer, films[i]);
     }
 

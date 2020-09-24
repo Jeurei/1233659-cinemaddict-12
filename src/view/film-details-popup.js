@@ -261,6 +261,6 @@ export default class FilmPopup extends Smart {
       });
     };
 
-    this.shake(resetFormState);
+    this.setShakeAnimation(resetFormState);
   }
 }

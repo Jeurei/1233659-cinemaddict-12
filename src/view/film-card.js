@@ -3,7 +3,7 @@ import {formatDateYear, getTimeFromMins} from '../utils/films.js';
 
 const createSiteFilmCard = (film) => {
   const {name, rating, releaseDate, filmDuration, filmGenre, description, img, comments, isInWatchlist, isWatched, isFavorite} = film;
-  const newDescription = (description.length > 140) ? description.slice(0, 139) + `...` : description;
+  const newDescription = (description.length > 140) ? `${description.slice(0, 139)}...` : description;
   const watchlistButtonClass = (isInWatchlist) ? `film-card__controls-item--active` : ``;
   const watchedButtonClass = (isWatched) ? `film-card__controls-item--active` : ``;
   const favoriteButtonClass = (isFavorite) ? `film-card__controls-item--active` : ``;

@@ -200,7 +200,7 @@ export default class FilmPresenter {
         break;
       case State.ABORTING:
         if (this._mode === Mode.OPENED) {
-          this._filmPopupComponent.shake(resetFormState);
+          this._filmPopupComponent.setShakeAnimation(resetFormState);
         }
         break;
     }
