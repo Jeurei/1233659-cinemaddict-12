@@ -8,9 +8,9 @@ export default class Filter {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
+    this._isDisable = true;
     this._currentFilter = null;
     this._siteNavComponent = null;
-
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
@@ -23,8 +23,7 @@ export default class Filter {
     const filters = this._getFilters();
     const prevFilterComponent = this._siteNavComponent;
 
-    this._siteNavComponent = new SiteNav(filters, this._currentFilter);
-    this._siteNavComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._siteNavComponent = new SiteNav(filters, this._currentFilter, this._isDisable);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._siteNavComponent, RenderPosition.BEFOREEND);
@@ -33,6 +32,13 @@ export default class Filter {
 
     replace(this._siteNavComponent, prevFilterComponent);
     remove(prevFilterComponent);
+
+    if (this._isDisable) {
+      return;
+    }
+
+    this._siteNavComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+
   }
 
   _restoreHandlers() {
@@ -76,5 +82,10 @@ export default class Filter {
   setMenuClickHandler(callback) {
     this._menuClickHandler = callback;
     this._siteNavComponent.setMenuClickHandler(callback);
+  }
+
+  turnOnFilters() {
+    this._isDisable = false;
+    this.init();
   }
 }

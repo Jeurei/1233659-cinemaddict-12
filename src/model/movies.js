@@ -17,7 +17,7 @@ export default class Movies extends Observer {
   }
 
   updateFilms(updateType, update) {
-    const index = this._movies.findIndex((film) => film.id === update.id);
+    const index = this.findFilmIndexById(update.id);
 
     if (index === -1) {
       throw new Error(`Can't update unexisting film`);
@@ -33,8 +33,7 @@ export default class Movies extends Observer {
   }
 
   addComment(updateType, update) {
-
-    const index = this._movies.findIndex((film) => film.id === update.id);
+    const index = this.findFilmIndexById(update.id);
 
     if (index === -1) {
       throw new Error(`Can't update unexisting film`);
@@ -50,8 +49,7 @@ export default class Movies extends Observer {
   }
 
   deleteComment(updateType, update) {
-    const index = this._movies.findIndex((film) => film.id === update.id);
-
+    const index = this.findFilmIndexById(update.id);
     if (index === -1) {
       throw new Error(`Can't update unexisting film`);
     }
@@ -86,10 +84,9 @@ export default class Movies extends Observer {
           isInWatchlist: film.user_details.watchlist,
           isWatched: film.user_details.already_watched,
           isFavorite: film.user_details.favorite,
-          watchingDate: new Date(film.user_details.watching_date),
+          watchingDate: film.user_details.watching_date === null ? null : new Date(film.user_details.watching_date)
         }
     );
-
     delete adaptedFilm.film_info;
     delete adaptedFilm.user_details;
 
@@ -122,7 +119,7 @@ export default class Movies extends Observer {
             "already_watched": film.isWatched,
             "favorite": film.isFavorite,
             "watchlist": film.isInWatchlist,
-            "watching_date": film.watchingDate.toISOString(),
+            "watching_date": film.watchingDate === null ? null : film.watchingDate.toISOString(),
           }
         }
     );
@@ -179,5 +176,9 @@ export default class Movies extends Observer {
     delete adaptedComment.emoji;
 
     return adaptedComment;
+  }
+
+  findFilmIndexById(index) {
+    return this._movies.findIndex((film) => film.id === index);
   }
 }

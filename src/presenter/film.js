@@ -3,11 +3,17 @@ import FilmPopup from '../view/film-details-popup.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {ESC_CODE} from '../const.js';
 import {UserAction, UpdateType} from "../const.js";
+
 const Mode = {
   DEFAULT: `DEFAULT`,
   OPENED: `OPENED`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
 
 export default class FilmPresenter {
   constructor(filmContainer, changeData, changeMode) {
@@ -17,7 +23,6 @@ export default class FilmPresenter {
     this._filmPopupComponent = null;
     this._changeMode = changeMode;
     this._mode = Mode.DEFAULT;
-    this._updateCard = this._updateCard.bind(this);
     this._addToWatchListClickHandler = this._addToWatchListClickHandler.bind(this);
     this._addToWatchedClickHandler = this._addToWatchedClickHandler.bind(this);
     this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
@@ -47,6 +52,7 @@ export default class FilmPresenter {
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
       render(this._filmContainer, this._filmComponent, RenderPosition.BEFOREEND);
+
       return;
     }
 
@@ -70,22 +76,9 @@ export default class FilmPresenter {
     }
   }
 
-  _updateCard(film) {
-    this._film = film;
-    const prevFilmComponent = this._filmComponent;
-    this._filmComponent = new Film(film);
-
-    this._filmComponent.setClickHandler(this._clickHandler);
-    this._filmComponent.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
-    this._filmComponent.setAddToWatchedClickHandler(this._addToWatchedClickHandler);
-    this._filmComponent.setAddToFavoriteClickHandler(this._addToFavoriteClickHandler);
-
-    replace(this._filmComponent, prevFilmComponent);
-  }
-
-  destroy(isPopupOppened) {
+  destroy(isPopupOpenned = false) {
     remove(this._filmComponent);
-    if (!isPopupOppened) {
+    if (!isPopupOpenned) {
       remove(this._filmPopupComponent);
     }
   }
@@ -130,7 +123,8 @@ export default class FilmPresenter {
             {},
             film,
             {
-              isWatched: !this._film.isWatched
+              isWatched: !this._film.isWatched,
+              watchingDate: this._film.watchingDate === null ? new Date() : null
             }
         )
     );
@@ -167,17 +161,48 @@ export default class FilmPresenter {
     this._mode = Mode.DEFAULT;
   }
 
-  _deleteClickHandler(film, commentId) {
-    this._changeData(
+  _deleteClickHandler(film, targetComment) {
+    return this._changeData(
         UserAction.DELETE_COMMENT,
         UpdateType.MINOR,
-        film, commentId);
+        film, targetComment);
   }
 
   _addCommentKeyDown(film) {
-    this._changeData(
+    return this._changeData(
         UserAction.ADD_COMMENT,
         UpdateType.MINOR,
         film);
+  }
+
+  setViewState(state, comment) {
+    const resetFormState = () => {
+      this._filmPopupComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._filmPopupComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        }, true);
+        break;
+      case State.DELETING:
+        this._filmPopupComponent.setDeletingComment(comment);
+        this._filmPopupComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        if (this._mode === Mode.OPENED) {
+          this._filmPopupComponent.setShakeAnimation(resetFormState);
+        }
+        break;
+    }
   }
 }

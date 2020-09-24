@@ -3,7 +3,7 @@ import {formatDateYear, getTimeFromMins} from '../utils/films.js';
 
 const createSiteFilmCard = (film) => {
   const {name, rating, releaseDate, filmDuration, filmGenre, description, img, comments, isInWatchlist, isWatched, isFavorite} = film;
-  const newDescription = (description.length > 140) ? description.slice(0, 139) + `...` : description;
+  const newDescription = (description.length > 140) ? `${description.slice(0, 139)}...` : description;
   const watchlistButtonClass = (isInWatchlist) ? `film-card__controls-item--active` : ``;
   const watchedButtonClass = (isWatched) ? `film-card__controls-item--active` : ``;
   const favoriteButtonClass = (isFavorite) ? `film-card__controls-item--active` : ``;
@@ -15,7 +15,7 @@ const createSiteFilmCard = (film) => {
     <p class="film-card__info">
       <span class="film-card__year">${formatDateYear(releaseDate)}</span>
       <span class="film-card__duration">${getTimeFromMins(filmDuration)}</span>
-      <span class="film-card__genre">${filmGenre[0]}</span>
+      <span class="film-card__genre">${filmGenre[0] ? filmGenre[0] : ``}</span>
     </p>
     <img src="${img}" alt="${name}" class="film-card__poster">
     <p class="film-card__description">${newDescription}</p>

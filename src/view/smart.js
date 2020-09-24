@@ -19,17 +19,30 @@ export default class Smart extends AbstractView {
     this.restoreHandlers();
   }
 
-  updateData(update) {
+  updateData(update, onlyUpdateData = false) {
     if (!update) {
       return;
     }
 
+    this._setScrollPosition();
     this._data = Object.assign(
         {},
         this._data,
         update
     );
 
-    this.updateElement();
+    if (!onlyUpdateData) {
+      this.updateElement();
+      this._restoreScrollPosition();
+    }
+  }
+
+  _setScrollPosition() {
+    this._scrollPosition = this.getElement().scrollTop;
+  }
+
+  _restoreScrollPosition() {
+    this.getElement().scrollTop = this._scrollPosition;
+    this._scrollPosition = null;
   }
 }

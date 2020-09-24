@@ -1,4 +1,4 @@
-import FilmPresenter from './film.js';
+import FilmPresenter, {State as FilmPresenterStates} from './film.js';
 import SiteSort from '../view/site-sort.js';
 import SiteMainContentContainers from '../view/site-films-containers';
 import SiteFilmsList from '../view/site-films-list';
@@ -43,6 +43,7 @@ export default class MovieList {
   init() {
     this._filmContainer = new SiteMainContentContainers();
     this._siteDefaultFilmsList = new SiteFilmsList(DEFAULT_FILM_LIST_CLASS);
+
     this._siteExtraFilmsLists = new Array(QUANTITY_OF_EXTRA_FILMS_LISTS).fill().map(() => new SiteFilmsList(EXTRA_FILMS_LIST_CLASS));
 
     render(this._movieListContainer, this._filmContainer, RenderPosition.BEFOREEND);
@@ -84,50 +85,77 @@ export default class MovieList {
     return filtredFilms;
   }
 
-  _handleViewAction(actionType, updateType, update, commentId) {
+  _handleViewAction(actionType, updateType, update, targetComment) {
     let film = null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this._api.updateFilm(update).then((movie) => {
-          film = movie;
-          return this._api.getComments(movie.id);
-        })
-        .then((comments) => {
-          film.comments = comments;
-          this._moviesModel.updateFilms(updateType, film);
+          this._moviesModel.updateFilms(updateType, movie);
         });
         break;
       case UserAction.ADD_COMMENT:
         film = update;
-        this._api.addComment(update, update.comments).then((comments) => {
-          film.comments = comments;
+        for (let presenter of this._filmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
+          }
+        }
+        return this._api.addComment(update, update.comments).then((comments) => {
           this._moviesModel.addComment(updateType, film);
           for (let presenter of this._filmPresenter.keys()) {
-            if (presenter === film.id) {
-              presenter.init(film);
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve(comments);
+        })
+        .catch(()=>{
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
             }
           }
         });
-        break;
       case UserAction.DELETE_COMMENT:
-        this._api.deleteComment(commentId).then(() => {
+        film = update;
+        for (let presenter of this._filmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, targetComment);
+          }
+        }
+        return this._api.deleteComment(targetComment).then(() => {
           this._moviesModel.deleteComment(updateType, update);
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve();
+        })
+        .catch(()=>{
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
+            }
+          }
+
+          return Promise.reject(new Error(`Internet connection lost`));
         });
-        break;
     }
+    return null;
   }
 
   _handleModelEvent(updateType, updatedFilm) {
-    const arrayOfPresenters = [];
+    const presenters = [];
     for (let presenter of this._filmPresenter.keys()) {
       if (presenter[0] === updatedFilm.id) {
-        arrayOfPresenters.push(presenter);
+        presenters.push(presenter);
       }
     }
 
     switch (updateType) {
       case UpdateType.PATCH:
-        arrayOfPresenters.forEach(function (presenter) {
+        presenters.forEach((presenter) => {
           this._filmPresenter.get(presenter).init(updatedFilm);
         }, this);
         break;
@@ -174,12 +202,12 @@ export default class MovieList {
   }
 
   _handleShowMoreButtonClick() {
-    const filmsCount = this._moviesModel.getMovies().length;
+    const filmsCount = this._getFilms().length;
     const newRenderedFilmsCount = Math.min(filmsCount, this._renderedFilms + QUANTITY_OF_FILM_CARDS_PER_STEP);
-    this._renderFilms(this._moviesModel.getMovies().slice(this._renderedFilms, newRenderedFilmsCount));
+    this._renderFilms(this._getFilms().slice(this._renderedFilms, newRenderedFilmsCount));
     this._renderedFilms = newRenderedFilmsCount;
 
-    if (this._renderedFilms >= this._moviesModel.getMovies().length) {
+    if (this._renderedFilms >= this._getFilms().length) {
       this._showMoreButton.getElement().remove();
     }
   }
@@ -206,6 +234,14 @@ export default class MovieList {
   _renderExtraFilmsContainers() {
     const newExtraFilmsLists = [];
 
+    if (this._moviesModel.getMovies().filter((film) => film.comments.length === 0).length === this._moviesModel.getMovies) {
+      this._siteExtraFilmsLists = this._siteExtraFilmsLists.length - 1;
+    } else {
+      if (this._siteExtraFilmsLists < QUANTITY_OF_EXTRA_FILMS_LISTS) {
+        this._siteExtraFilmsLists.length = this._siteExtraFilmsLists.length + 1;
+      }
+    }
+
     this._siteExtraFilmsLists.forEach((element, i) => {
 
       render(element, new FilmListTitle(EXTRA_FILMS_LIST_TITLES[i]), RenderPosition.BEFOREEND);
@@ -227,7 +263,7 @@ export default class MovieList {
 
   _renderFilmList() {
     const films = this._getFilms();
-    for (let i = 0; i < Math.min(this._getFilms().length, this._renderedFilms); i++) {
+    for (let i = 0; i < Math.min(films.length, this._renderedFilms); i++) {
       this._renderFilmCard(this._filmsContainer, films[i]);
     }
 
@@ -254,11 +290,11 @@ export default class MovieList {
     }
 
     this._currentSortType = sortType;
-    this._clearMovieList();
+    this._clearMovieList({resetRenderedFilms: true});
     this._renderMovies();
   }
 
-  _clearMovieList({isPopupOppened = false, resetSortType = false, resetRenderedFilms = false} = {}) {
+  _clearMovieList({resetSortType = false, resetRenderedFilms = false, isPopupOppened = false} = {}) {
     const filmsCount = this._moviesModel.getMovies().length;
 
     for (let presenter of this._filmPresenter.values()) {
@@ -320,6 +356,18 @@ export default class MovieList {
       this._siteExtraFilmsLists.forEach((element, i) => {
         this._renderExtraFilmsLists(element, i);
       }, this);
+    }
+  }
+
+  setConnectionModeOnline() {
+    for (let presenter of this._filmPresenter.keys()) {
+      this._filmPresenter.get(presenter).turnOnInputs();
+    }
+  }
+
+  setConnectionModeOffline() {
+    for (let presenter of this._filmPresenter.keys()) {
+      this._filmPresenter.get(presenter).turnOffInputs();
     }
   }
 }
