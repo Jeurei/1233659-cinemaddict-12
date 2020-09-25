@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export const getGenresFrequencies = (films) => {
-  let mapOfGenres = {};
+  const mapOfGenres = {};
 
   films.forEach((film) =>{
     film.filmGenre.forEach((genre) => {

@@ -8,10 +8,10 @@ const createComments = (comments, deletingComment, isDisabled, isDeleting) => {
     return ``;
   }
 
-  let results = [];
+  const results = [];
 
   for (let i = 0; i < comments.length; i++) {
-    let comment =
+    const comment =
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
       <img src="${emojiMap[comments[i].emoji]}" width="55" height="55" alt="emoji-${comments[i].emoji}">

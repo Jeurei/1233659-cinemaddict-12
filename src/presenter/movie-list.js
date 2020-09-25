@@ -95,14 +95,14 @@ export default class MovieList {
         break;
       case UserAction.ADD_COMMENT:
         film = update;
-        for (let presenter of this._filmPresenter.keys()) {
+        for (const presenter of this._filmPresenter.keys()) {
           if (presenter[0] === film.id) {
             this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
           }
         }
         return this._api.addComment(update, update.comments).then((comments) => {
           this._moviesModel.addComment(updateType, film);
-          for (let presenter of this._filmPresenter.keys()) {
+          for (const presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
               this._filmPresenter.get(presenter).init(film);
             }
@@ -110,7 +110,7 @@ export default class MovieList {
           return Promise.resolve(comments);
         })
         .catch(()=>{
-          for (let presenter of this._filmPresenter.keys()) {
+          for (const presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
               this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
             }
@@ -118,14 +118,14 @@ export default class MovieList {
         });
       case UserAction.DELETE_COMMENT:
         film = update;
-        for (let presenter of this._filmPresenter.keys()) {
+        for (const presenter of this._filmPresenter.keys()) {
           if (presenter[0] === film.id) {
             this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, targetComment);
           }
         }
         return this._api.deleteComment(targetComment).then(() => {
           this._moviesModel.deleteComment(updateType, update);
-          for (let presenter of this._filmPresenter.keys()) {
+          for (const presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
               this._filmPresenter.get(presenter).init(film);
             }
@@ -133,7 +133,7 @@ export default class MovieList {
           return Promise.resolve();
         })
         .catch(()=>{
-          for (let presenter of this._filmPresenter.keys()) {
+          for (const presenter of this._filmPresenter.keys()) {
             if (presenter[0] === film.id) {
               this._filmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
             }
@@ -147,7 +147,7 @@ export default class MovieList {
 
   _handleModelEvent(updateType, updatedFilm) {
     const presenters = [];
-    for (let presenter of this._filmPresenter.keys()) {
+    for (const presenter of this._filmPresenter.keys()) {
       if (presenter[0] === updatedFilm.id) {
         presenters.push(presenter);
       }
@@ -177,7 +177,7 @@ export default class MovieList {
 
   _handleModeChange() {
 
-    for (let presenter of this._filmPresenter.values()) {
+    for (const presenter of this._filmPresenter.values()) {
       presenter.resetView();
     }
 
@@ -297,7 +297,7 @@ export default class MovieList {
   _clearMovieList({resetSortType = false, resetRenderedFilms = false, isPopupOppened = false} = {}) {
     const filmsCount = this._moviesModel.getMovies().length;
 
-    for (let presenter of this._filmPresenter.values()) {
+    for (const presenter of this._filmPresenter.values()) {
       presenter.destroy(isPopupOppened);
     }
 
@@ -360,13 +360,13 @@ export default class MovieList {
   }
 
   setConnectionModeOnline() {
-    for (let presenter of this._filmPresenter.keys()) {
+    for (const presenter of this._filmPresenter.keys()) {
       this._filmPresenter.get(presenter).turnOnInputs();
     }
   }
 
   setConnectionModeOffline() {
-    for (let presenter of this._filmPresenter.keys()) {
+    for (const presenter of this._filmPresenter.keys()) {
       this._filmPresenter.get(presenter).turnOffInputs();
     }
   }
