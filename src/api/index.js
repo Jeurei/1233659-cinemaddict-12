@@ -48,7 +48,7 @@ export default class Api {
   }
 
   addComment(film, comments) {
-    let lastComment = comments[comments.length - 1];
+    const lastComment = comments[comments.length - 1];
     return this._load({
       url: `comments/${film.id}`,
       method: Method.POST,
@@ -58,7 +58,7 @@ export default class Api {
     .then(Api.toJSON)
     .then((comment) =>{
       comments = comment.comments;
-      let adaptedComments = comments.map(MovieModel.adaptCommentsToClient);
+      const adaptedComments = comments.map(MovieModel.adaptCommentsToClient);
       return Promise.resolve(adaptedComments);
     });
   }

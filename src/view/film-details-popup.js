@@ -67,7 +67,7 @@ export default class FilmPopup extends Smart {
   }
 
   _onEmojiClickHandler(evt) {
-    let emoji = evt.currentTarget.getAttribute(`for`).split(`-`)[1];
+    const emoji = evt.currentTarget.getAttribute(`for`).split(`-`)[1];
     this._userEmoji = emoji;
     this.updateData({
       userEmoji: emoji
