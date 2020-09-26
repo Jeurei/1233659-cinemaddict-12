@@ -151,7 +151,7 @@ const createSiteStatistic = (rank, films, dateCase) => {
   );
 };
 
-export default class Statistic extends Smart {
+export default class Statistics extends Smart {
   constructor(films, statisticContainer) {
     super();
 

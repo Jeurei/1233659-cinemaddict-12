@@ -6,7 +6,7 @@ import MovieList from './presenter/movie-list.js';
 import MovieModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from "./presenter/filter.js";
-import Statistic from './view/statistic.js';
+import Statistics from './view/statistics.js';
 import Api from './api/index.js';
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
@@ -40,7 +40,7 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATISTICS:
       currentMenuMode = menuItem;
-      siteStatistic = new Statistic(moviesModel.getFilms(), siteMainElement);
+      siteStatistic = new Statistics(moviesModel.getFilms(), siteMainElement);
       moviePresenter.destroy();
       break;
   }
