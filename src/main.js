@@ -1,12 +1,12 @@
 import UserProfilePresenter from './presenter/user-profile.js';
-import SiteFooterStatistic from './view/footer-statisctic.js';
+import FooterStatistic from './view/footer-statisctic.js';
 import {render, RenderPosition} from './utils/render.js';
 import {MenuItem, UpdateType} from './const.js';
 import MovieList from './presenter/movie-list.js';
 import MovieModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from "./presenter/filter.js";
-import SiteStatistic from './view/site-statistc.js';
+import Statistic from './view/statistic.js';
 import Api from './api/index.js';
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
@@ -40,7 +40,7 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATISTICS:
       currentMenuMode = menuItem;
-      siteStatistic = new SiteStatistic(moviesModel.getMovies(), siteMainElement);
+      siteStatistic = new Statistic(moviesModel.getFilms(), siteMainElement);
       moviePresenter.destroy();
       break;
   }
@@ -54,15 +54,15 @@ moviePresenter.init();
 
 apiWithProvider.getMovies().then((films) => {
 
-  moviesModel.setMovies(UpdateType.INIT, films);
+  moviesModel.setFilms(UpdateType.INIT, films);
   filterPresenter.turnOnFilters();
   filterPresenter.setMenuClickHandler(handleSiteMenuClick);
   const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
   userProfilePresenter.init();
-  render(siteFooterElement, new SiteFooterStatistic(moviesModel.getMovies().length), RenderPosition.BEFOREEND);
+  render(siteFooterElement, new FooterStatistic(moviesModel.getFilms().length), RenderPosition.BEFOREEND);
 })
 .catch(() => {
-  moviesModel.setMovies(UpdateType.INIT, []);
+  moviesModel.setFilms(UpdateType.INIT, []);
 });
 
 

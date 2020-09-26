@@ -19,7 +19,7 @@ export default class Filter {
   }
 
   init() {
-    this._currentFilter = this._filterModel.getFilter();
+    this._currentFilter = this._filterModel.getFiltrationType();
     const filters = this._getFilters();
     const prevFilterComponent = this._siteNavComponent;
 
@@ -37,7 +37,7 @@ export default class Filter {
       return;
     }
 
-    this._siteNavComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._siteNavComponent.setFiltrationTypeChangeHandler(this._handleFilterTypeChange);
 
   }
 
@@ -54,11 +54,11 @@ export default class Filter {
     if (this._currentFilter === filterType) {
       return;
     }
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this._filterModel.setFiltrationType(UpdateType.MAJOR, filterType);
   }
 
   _getFilters() {
-    const films = this._moviesModel.getMovies();
+    const films = this._moviesModel.getFilms();
 
     return [
       {

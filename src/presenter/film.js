@@ -1,5 +1,5 @@
-import Film from '../view/film-card.js';
-import FilmPopup from '../view/film-details-popup.js';
+import Film from '../view/film.js';
+import FilmPopup from '../view/film-popup.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {ESC_CODE} from '../const.js';
 import {UserAction, UpdateType} from "../const.js";

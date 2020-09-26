@@ -39,7 +39,7 @@ export default class SiteNav extends AbstractView {
     this._callback.filterTypeChange(evt.target.getAttribute(`href`).split(`#`)[1]);
   }
 
-  setFilterTypeChangeHandler(callback) {
+  setFiltrationTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((item) => item.addEventListener(`click`, this._filterTypeChangeHandler));
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);

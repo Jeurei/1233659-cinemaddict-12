@@ -11,7 +11,7 @@ export default class UserProfilePresenter {
   }
 
   init() {
-    const quantityOfWatched = ([...this._moviesModel.getMovies()].filter((movie)=>movie.isWatched)).length;
+    const quantityOfWatched = ([...this._moviesModel.getFilms()].filter((movie)=>movie.isWatched)).length;
     const prevUserProfileComponent = this._userProfileComponent;
 
     this._userProfileComponent = new UserProfile(quantityOfWatched);

@@ -1,5 +1,5 @@
-import DetailsDescription from './film-details-description.js';
-import DetailsComments from './film-details-comments.js';
+import DetailsDescription from './details-description.js';
+import DetailsComments from './details-comments.js';
 import Smart from './smart.js';
 import {emojiMap, ENTER_CODE, ESC_CODE} from '../const.js';
 
@@ -24,7 +24,6 @@ export default class FilmPopup extends Smart {
     super();
     this._data = FilmPopup.parseFilmToData(data);
     this._deletingComment = null;
-    this._input = null;
     this._userText = null;
     this._createComment = this._createComment.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);

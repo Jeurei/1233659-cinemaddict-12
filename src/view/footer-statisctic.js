@@ -9,7 +9,7 @@ const createSiteFooterStatistic = (quantityOfFilms) => {
   );
 };
 
-export default class SiteStatistic extends AbstractView {
+export default class FooterStatistic extends AbstractView {
   constructor(quantityOfFilms) {
     super();
     this._quantityOfFilms = quantityOfFilms;

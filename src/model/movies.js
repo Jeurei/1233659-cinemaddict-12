@@ -7,16 +7,16 @@ export default class Movies extends Observer {
     this._movies = [];
   }
 
-  setMovies(updateType, movies) {
+  setFilms(updateType, movies) {
     this._movies = movies;
     this._notify(updateType);
   }
 
-  getMovies() {
+  getFilms() {
     return this._movies;
   }
 
-  updateFilms(updateType, update) {
+  _updateFilm(update) {
     const index = this.findFilmIndexById(update.id);
 
     if (index === -1) {
@@ -28,37 +28,22 @@ export default class Movies extends Observer {
       update,
       ...this._movies.slice(index + 1)
     ];
+  }
+
+  updateFilms(updateType, update) {
+    this._updateFilm(update);
 
     this._notify(updateType, update);
   }
 
   addComment(updateType, update) {
-    const index = this.findFilmIndexById(update.id);
-
-    if (index === -1) {
-      throw new Error(`Can't update unexisting film`);
-    }
-
-    this._movies = [
-      ...this._movies.slice(0, index),
-      update,
-      ...this._movies.slice(index + 1)
-    ];
+    this._updateFilm(update);
 
     this._notify(updateType, update);
   }
 
   deleteComment(updateType, update) {
-    const index = this.findFilmIndexById(update.id);
-    if (index === -1) {
-      throw new Error(`Can't update unexisting film`);
-    }
-
-    this._movies = [
-      ...this._movies.slice(0, index),
-      update,
-      ...this._movies.slice(index + 1)
-    ];
+    this._updateFilm(update);
 
     this._notify(updateType, update);
   }

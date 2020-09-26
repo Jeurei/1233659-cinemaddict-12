@@ -151,7 +151,7 @@ const createSiteStatistic = (rank, films, dateCase) => {
   );
 };
 
-export default class Statistcs extends Smart {
+export default class Statistic extends Smart {
   constructor(films, statisticContainer) {
     super();
 
@@ -180,7 +180,6 @@ export default class Statistcs extends Smart {
   }
 
   destroy() {
-    this._chart = null;
     remove(this);
   }
 
@@ -202,6 +201,6 @@ export default class Statistcs extends Smart {
     const filmsFiltredByCase = getStatisticCaseFilms[dateCase](this._films);
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
 
-    this._chart = renderCharts(filmsFiltredByCase, statisticCtx);
+    renderCharts(filmsFiltredByCase, statisticCtx);
   }
 }
