@@ -156,7 +156,6 @@ export default class Statistics extends Smart {
     super();
 
     this._statisticContainer = statisticContainer;
-    this._charts = null;
     this._films = [...films].filter((film)=> film.isWatched);
     this._userRank = getUserRank(this._films.length);
     this._setChart();
@@ -178,16 +177,12 @@ export default class Statistics extends Smart {
       });
     });
   }
-  //
+
   destroy() {
-    this._charts = null;
     remove(this);
   }
 
   _setChart(dateCase = statisticsCasesMap.ALLTIME) {
-    if (this._charts !== null) {
-      this._charts = null;
-    }
 
     if (this._element !== null) {
       this.destroy();
