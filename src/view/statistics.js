@@ -178,7 +178,7 @@ export default class Statistics extends Smart {
       });
     });
   }
-
+  //
   destroy() {
     this._charts = null;
     remove(this);
